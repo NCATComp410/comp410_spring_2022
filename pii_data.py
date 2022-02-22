@@ -18,7 +18,10 @@ class Pii(str):
         return None
 
     def has_ipv4(self):
-        return None
+        match = re.search(r'\d{2}\.\d{2}\.\d{3}\.\d{3}', self)
+        if match:
+            return True
+        return False
 
     def has_ipv6(self):
         return None
@@ -55,6 +58,9 @@ if __name__ == '__main__':
     print('---')
 
     pii_data = Pii('My phone number is 123-123-1234')
+    print(pii_data)
+    
+    pii_data = Pii('My IPv4 is 99.48.227.227')
     print(pii_data)
 
     if pii_data.has_pii():
