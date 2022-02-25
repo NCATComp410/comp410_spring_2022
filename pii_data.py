@@ -1,8 +1,15 @@
 import re
 
-def has_email(self):
-    return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
+def has_email(self, anonymize = False):
+    # return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
+new, count = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.]{2,}\b', '[email]', self)
 
+        print(new)
+        print (bool(count))
+        if anonymize:
+            return new
+        else:
+           return bool(count)
 
 def read_data(filename: str):
     data = []

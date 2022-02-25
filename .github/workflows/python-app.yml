@@ -6,10 +6,10 @@ name: Python application
 on:
   push:
     branches: [ main ]
-    branches: [ wall_e ]
+   
   pull_request:
     branches: [ main ]
-    branches: [ wall_e ]
+   
 
 jobs:
   build:
