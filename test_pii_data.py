@@ -55,6 +55,7 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_ipv4(self):
         # Test a valid IPv4 address
+        # This is a new comment to test GitHub desktop commit
         test_data = Pii('176.96.81.20')
         self.assertTrue(test_data.has_ipv4())
 
