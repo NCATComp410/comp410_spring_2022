@@ -139,7 +139,16 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_credit_card())
 
     def test_has_at_handle(self):
-        test_data = Pii()
+        test_data = Pii('@tentrell07')
+        self.assertEqual(test_data.has_at_handle(), True)
+
+        test_data = Pii('@ten07')
+        self.assertEqual(test_data.has_at_handle(), True)
+
+        test_data = Pii('t@entrell07+%-bro')
+        self.assertEqual(test_data.has_at_handle(), None)
+
+        test_data = Pii('@tent%_rellyboii')
         self.assertEqual(test_data.has_at_handle(), None)
 
     def test_has_pii(self):
