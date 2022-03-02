@@ -77,8 +77,11 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_credit_card(), None)
 
     def test_has_at_handle(self):
-        test_data = Pii()
+        test_data = Pii('My social media is handle @tonicarr')
+        self.assertEqual(test_data.has_at_handle(), True)
+        test_data = Pii('My social media is tonicarr')
         self.assertEqual(test_data.has_at_handle(), None)
+
 
     def test_has_pii(self):
         test_data = Pii()
@@ -87,3 +90,4 @@ class DataTestCases(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+ 

@@ -33,7 +33,11 @@ class Pii(str):
         return None
 
     def has_at_handle(self):
-        return None
+        match = re.search('\@', self)
+        if match:
+            return True
+        else: 
+            return None
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
@@ -52,9 +56,9 @@ def read_data(filename: str):
 if __name__ == '__main__':
     data = read_data('sample_data.txt')
     print(data)
-    print('---')
+    print('----------------------------------')
 
-    pii_data = Pii('My phone number is 123-123-1234')
+    pii_data = Pii('My social media handle is @tonicarr')
     print(pii_data)
 
     if pii_data.has_pii():
