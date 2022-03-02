@@ -145,7 +145,9 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_credit_card())
 
     def test_has_at_handle(self):
-        test_data = Pii()
+        test_data = Pii('My social media is handle @tonicarr')
+        self.assertEqual(test_data.has_at_handle(), True)
+        test_data = Pii('My social media is tonicarr')
         self.assertEqual(test_data.has_at_handle(), None)
 
     def test_has_ssn(self):
@@ -163,8 +165,6 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('098-6-9878')
         self.assertFalse(test_data.has_ssn())
 
-        # TODO make bad inputs
-
     def test_has_pii(self):
         test_data = Pii()
         self.assertEqual(test_data.has_pii(), None)
@@ -173,3 +173,4 @@ class DataTestCases(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+ 

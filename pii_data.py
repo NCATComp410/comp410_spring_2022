@@ -46,7 +46,11 @@ class Pii(str):
         return True if re.search(r'(\d{4}-\d{4}-\d{4}-\d{4})|(\d{4}-\d{6}-\d{5})', self) else None
 
     def has_at_handle(self):
-        return None
+        match = re.search('(^|\s)@\w+', self)
+        if match:
+            return True
+        else: 
+            return None
 
     def has_ssn(self):
         return True if re.search(r'\d{3}-\d{2}-\d{4}', self) else None
@@ -67,9 +71,9 @@ def read_data(filename: str):
 if __name__ == '__main__':
     data = read_data('sample_data.txt')
     print(data)
-    print('---')
+    print('----------------------------------')
 
-    pii_data = Pii('My phone number is 123-123-1234')
+    pii_data = Pii('My social media handle is @tonicarr')
     print(pii_data)
 
     if pii_data.has_pii():
