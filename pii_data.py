@@ -30,10 +30,17 @@ class Pii(str):
         return None
 
     def has_credit_card(self):
-        return None
+        # Match a credit card number dddd-dddd-dddd-dddd
+        match = re.search(r'(\d{4}-\d{4}-\d{4}-\d{4})', self)
+        if match:
+            return True
+        return False
 
     def has_at_handle(self):
-        return None
+        match = re.search(r'[@][A-Za-z0-9_]+$', self)
+        if match:
+            return True
+        return False
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
