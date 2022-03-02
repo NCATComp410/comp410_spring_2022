@@ -33,7 +33,7 @@ class Pii(str):
         return None
 
     def has_at_handle(self):
-        match = re.search('\@', self)
+        match = re.search('@[A-Za-z]', self)
         if match:
             return True
         else: 
