@@ -71,12 +71,37 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_email(), None)
 
     def test_has_ipv4(self):
-        test_data = Pii()
-        self.assertEqual(test_data.has_ipv4(), None)
+        #Successful test cases
+        test_data = Pii('222.33.100.12')
+        self.assertTrue(test_data.has_ipv4())
+
+        test_data = Pii('45.68.195.254')
+        self.assertTrue(test_data.has_ipv4())
+
+        # Test values are out of the range for allowed addresses
+        test_data = Pii('300.22.555.256')
+        self.assertFalse(test_data.has_ipv4())
+
+        # Test wrong format
+        test_data = Pii('145')  # incomplete address
+        self.assertFalse(test_data.has_ipv4())
+
 
     def test_has_ipv6(self):
-        test_data = Pii()
-        self.assertEqual(test_data.has_ipv6(), None)
+        # test a valid address
+        test_data = Pii('0045:Fa34:53d9:4d53:0020:0000:6491:8485')
+        self.assertTrue(test_data.has_ipv6())  
+
+        test_data = Pii('0000::5248:ee43::8789:1234:1200')
+        self.assertTrue(test_data.has_ipv6())  
+
+        # test an invalid address with to many digits in segment
+        test_data = Pii('00000:::::')
+        self.assertFalse(test_data.has_ipv6())        
+        
+        # test an invalid address w letter outside of bounds
+        self.assertFalse(test_data.has_ipv6())  
+        test_data = Pii('r445:rtyu:vd45:nmkl:af24:kb78')
 
     def test_has_name(self):
         test_data = Pii('My name is Alex Red')

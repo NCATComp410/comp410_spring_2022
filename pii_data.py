@@ -16,10 +16,25 @@ class Pii(str):
         return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
 
     def has_ipv4(self):
-        return None
+        #the 4 values in the IP address are from 0-255 for each segment each line is 1 segment
+        match = re.search(r'^\b([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
+        r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
+        r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
+        r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b$', self)
+
+        if match:
+            return True
+        return False
 
     def has_ipv6(self):
-        return None
+        #There are 8 avaliable chunks to place IP data also allowing for no data to be input. Covers 0-9,a-f, and A-F
+        match = re.search(r'(^(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
+        r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
+        r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
+        r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?$)', self)
+        if match:
+            return True
+        return False
 
     def has_name(self):
         return True if re.search(r'[A-Z][a-z]+\s[A-Z][a-z]+', self) else None
