@@ -31,7 +31,7 @@ class Pii(str):
         return True if re.search(r'(\d{4}-\d{4}-\d{4}-\d{4})|(\d{4}-\d{6}-\d{5})', self) else None
 
     def has_at_handle(self):
-        match = re.search('@[A-Za-z]', self)
+        match = re.search('(^|\s)@\w+', self)
         if match:
             return True
         else: 
