@@ -27,7 +27,10 @@ class Pii(str):
         return None
 
     def has_street_address(self):
-        return None
+        match = re.search(r'^[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', self)
+        if match:
+            return True
+        return False
 
     def has_credit_card(self):
         return None
