@@ -34,10 +34,16 @@ class Pii(str):
 
     def has_at_handle(self):
         return None
+    
+    def has_ssn(self):
+        match = re.search(r'^(?!000|.+0{4})(?:\d{9}|\d{3}-\d{2}-\d{4})$', self)
+        if match:
+            return True
+        return False
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
-               self.has_street_address() or self.has_credit_card() or self.has_at_handle()
+               self.has_street_address() or self.has_credit_card() or self.has_at_handle or self.has_ssn()
 
 
 def read_data(filename: str):
