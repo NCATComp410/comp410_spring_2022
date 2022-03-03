@@ -68,7 +68,7 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('A001:0db8:85a3:0000:0000::0370:7334:')
         self.assertFalse(test_data.has_ipv6())
         # test invalid test cases
-        test_data = Pii('2001:0db8:85a3:0000:'')
+        test_data = Pii('2001:0db8:85a3:0000:')
         self.assertFalse(test_data.has_ipv6()) 
 
 
