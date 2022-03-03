@@ -140,7 +140,7 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_pii(self):
         test_data = Pii()
-        self.assertEqual(test_data.has_pii(), None)
+        self.assertFalse(test_data.has_pii())
 
 
 if __name__ == '__main__':
