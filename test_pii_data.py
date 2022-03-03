@@ -84,8 +84,16 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv4())
 
     def test_has_ipv6(self):
-        test_data = Pii()
-        self.assertEqual(test_data.has_ipv6(), None)
+        # test valid test cases
+        test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334')
+        self.assertTrue(test_data.has_ipv6())
+        # test invalid test cases
+        test_data = Pii('A001:0db8:85a3:0000:0000::0370:7334:')
+        self.assertFalse(test_data.has_ipv6())
+        # test invalid test cases
+        test_data = Pii('2001:0db8:85a3:0000:')
+        self.assertFalse(test_data.has_ipv6()) 
+
 
     def test_has_name(self):
         test_data = Pii('My name is Alexander Hamilton.')
