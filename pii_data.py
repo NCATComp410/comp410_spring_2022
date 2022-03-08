@@ -61,8 +61,13 @@ class Pii(str):
         else:
             return None
 
-    def has_ssn(self):
-        return True if re.search(r'\d{3}-\d{2}-\d{4}', self) else None
+    def has_ssn(self, anonymize=False):
+        newstr = re.sub(
+            r'\d{3}-\d{2}-\d{4}', '[social security number]', self)
+        if anonymize:
+            return newstr
+        else:
+            return True if newstr != self else None
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn()
