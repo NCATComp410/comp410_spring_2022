@@ -66,6 +66,22 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('My phone number is 970.555.1212')
         self.assertTrue(test_data.has_us_phone())
 
+    def test_has_us_phone_anonymize(self):
+        # Test a valid US phone number
+        test_data = Pii('My phone number is 970-555-1212')
+        self.assertEqual(test_data.has_us_phone(anonymize=True),'My phone number is [phone number]')
+        # Test a valid US phone number
+        test_data = Pii('My phone number is 9705551212')
+        self.assertEqual(test_data.has_us_phone(anonymize=True),'My phone number is [phone number]')
+
+        # Test a partial US phone number
+        test_data = Pii('My number is 555-1212')
+        self.assertEqual(test_data.has_us_phone(anonymize=True),'My number is 555-1212')
+
+        # Updated to allow for this entry
+        test_data = Pii('My phone number is 970.555.1212')
+        self.assertEqual(test_data.has_us_phone(anonymize=True),'My phone number is [phone number]')
+
     def test_has_email(self):
         test_data = Pii()
         self.assertEqual(test_data.has_email(), None)

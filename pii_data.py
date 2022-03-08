@@ -7,9 +7,14 @@ class Pii(str):
     # For help with regex see
     # https://regex101.com
     # https://www.w3schools.com/python/python_regex.asp
-    def has_us_phone(self):
+    def has_us_phone(self, anonymize=False):
         # Match a US phone number ddd-ddd-dddd ie 123-456-7890
-        return True if re.search(r'(\d{3}(-|.)\d{3}(-|.)\d{4})|\d{10}', self) else None
+        newstr = re.sub(
+            r'(\d{3}(-|.)\d{3}(-|.)\d{4})|\d{10}', '[phone number]', self)
+        if anonymize:
+            return newstr
+        else:
+            return True if newstr != self else None
 
     def has_email(self):
         return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
