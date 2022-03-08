@@ -124,25 +124,37 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_street_address(), None)
 
     def test_has_credit_card(self):
-        test_data = Pii('1929-1228-3455-3454')
+        test_data = Pii('My credit card number is 1929-1228-3455-3454')
         self.assertTrue(test_data.has_credit_card())
-        test_data = Pii('2345-4567-5678-6789')
+        test_data = Pii('My credit card number is 2345-4567-5678-6789')
         self.assertTrue(test_data.has_credit_card())
-        test_data = Pii('2345-1324-3456-1234')
+        test_data = Pii('My credit card number is 2345-1324-3456-1234')
         self.assertTrue(test_data.has_credit_card())
-        test_data = Pii('5678-2349-7654-6435')
+        test_data = Pii('My credit card number is 5678-2349-7654-6435')
         self.assertTrue(test_data.has_credit_card())
 
         # Amex card case
-        test_data = Pii('1234-123456-12345')
+        test_data = Pii('My credit card number is 1234-123456-12345')
         self.assertTrue(test_data.has_credit_card())
 
         # bad symbol
-        test_data = Pii('3456=1234=5678=6789')
+        test_data = Pii('My credit card number is 3456=1234=5678=6789')
         self.assertFalse(test_data.has_credit_card())
         # missing symbol
-        test_data = Pii('1234764598764567')
+        test_data = Pii('My credit card number is 1234764598764567')
         self.assertFalse(test_data.has_credit_card())
+    def test_has_credit_card_anonymize(self):
+        test_data = Pii('My credit card number is 1929-1228-3455-3454')
+        self.assertEqual(test_data.has_credit_card(anonymize=True), 'My credit card number is [credit card number]')
+        test_data = Pii('My credit card number is 2345-4567-5678-6789')
+        self.assertEqual(test_data.has_credit_card(anonymize=True), 'My credit card number is [credit card number]')
+
+        # bad symbol
+        test_data = Pii('My credit card number is 3456=1234=5678=6789')
+        self.assertEqual(test_data.has_credit_card(anonymize=True),'My credit card number is 3456=1234=5678=6789')
+        # missing symbol
+        test_data = Pii('My credit card number is 1234764598764567')
+        self.assertEqual(test_data.has_credit_card(anonymize=True),'My credit card number is 1234764598764567')
 
     def test_has_at_handle(self):
         test_data = Pii('My social media is handle @tonicarr')
