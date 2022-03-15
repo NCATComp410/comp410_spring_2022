@@ -189,6 +189,13 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_at_handle(), True)
         test_data = Pii('My social media is tonicarr')
         self.assertEqual(test_data.has_at_handle(), None)
+    
+    def test_has_at_handle_anonymize(self):
+        test_data = Pii('My social media is handle @tonicarr')
+        self.assertEqual(test_data.has_at_handle(anonymize=True),'My social media is handle[at handle]')
+        test_data = Pii('My social media is tonicarr')
+        self.assertEqual(test_data.has_at_handle(anonymize=True), 'My social media is tonicarr')
+
 
     def test_has_ssn(self):
         test_data = Pii('My social security is 123-45-5667')

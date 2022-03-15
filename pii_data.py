@@ -54,12 +54,12 @@ class Pii(str):
         else:
             return True if newstr != self else None
 
-    def has_at_handle(self):
-        match = re.search('(^|\s)@\w+', self)
-        if match:
-            return True
+    def has_at_handle(self, anonymize = False):
+        match = re.sub('(^|\s)@\w+','[at handle]', self)
+        if anonymize:
+            return match
         else:
-            return None
+            return True if match != self else None
 
     def has_ssn(self, anonymize=False):
         newstr = re.sub(
