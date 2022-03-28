@@ -21,7 +21,7 @@ class Pii(str):
             return True
         return False
 
-    def has_ipv4(self):
+    def has_ipv4(self, anonymize=False):
         # Match an IPv4 address: num.num.num.num where num range = 0 - 255
 
         # [0-9]:        match numbers 0 - 9
@@ -29,32 +29,33 @@ class Pii(str):
         # 1[0-9][0-9]:  match numbers 100 - 199
         # 2[0-4][0-9]:  match numbers 200 - 249
         # 25[0-5]:      match numbers 250 - 255
+        ipv4, count1 = re.subn(r'^\d{4}(\d{12})?$', '[iPv4 address]', self)
 
-        match = re.search(r'^\b([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
-                           r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
-                           r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
-                           r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b$', self)
-
-
+        ipv4, count2 = re.subn(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)'
+                               r'{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
+                               r'([^.^[0-9])*\b', '[iPv4 address]', ipv4)
 
         # 255.255.255.255 is already preserved for broadcasting and would be valid
         if self.__eq__('255.255.255.255') | self.__eq__('0.0.0.0'):
+            if anonymize:
+                return ipv4
             return False
-        elif match:
-            return True
-        return False
+        elif anonymize:
+            if count1 == 0 and count2 == 0:
+                return self
+            return ipv4
+        return bool(count2 + count1)
 
     def has_ipv6(self):
         match = re.search(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', self)
+                          r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                          r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                          r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', self)
         if self.__eq__('0:0:0:0:0:0:0:0') | self.__eq__(':::::::'):
             return False
         if match:
             return True
         return False
-
 
     def has_name(self):
         # match the user's name

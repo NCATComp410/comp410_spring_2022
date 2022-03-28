@@ -61,44 +61,109 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('john@gmail')
         self.assertFalse(test_data.has_email())
 
-
-
     def test_has_ipv4(self):
         # Test a valid address
-        test_data = Pii('192.168.168.2')
+        test_data = Pii('192.168.168.28')
         self.assertTrue(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         '[iPv4 address]')
+
+        # Test a valid address
+        test_data = Pii('My ip is 192.168.168.2')
+        self.assertTrue(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'My ip is [iPv4 address]')
+
+        # Test address inside string
+        test_data = Pii('I have a different address 192.168.163.2')
+        self.assertTrue(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'I have a different address [iPv4 address]')
+
+        # Test address inside string
+        test_data = Pii('Samantha\'s address is 192.168.197.21')
+        self.assertTrue(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'Samantha\'s address is [iPv4 address]')
 
         # Test a reserved address
         test_data = Pii('255.255.255.255')  # for broadcasting
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         '[iPv4 address]')
         test_data = Pii('0.0.0.0')  # for default route
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         '[iPv4 address]')
 
         # Test an out of range address
         test_data = Pii('192.168.168.256')
         self.assertFalse(test_data.has_ipv4())
+        holder = test_data.has_ipv4(True)
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
 
         # Test incorrect format
-        test_data = Pii('192.168.168.1.2.5')  # Test address with extra digits
-        self.assertFalse(test_data.has_ipv4())
         test_data = Pii('192.168')  # incomplete address
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
         test_data = Pii('192..168.168.256')  # extra dot
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
         test_data = Pii('.192.168.168.256')  # dot at beginning
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
         test_data = Pii('192.168.168.256.')  # dot at end
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
         test_data = Pii('1f2.168.168.256')  # with 'f' in place of number
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
         test_data = Pii('192.168.168.$')  # with '$' in place of number
         self.assertFalse(test_data.has_ipv4())
-        test_data = Pii('192,168,168,$')  # with incorrect delimiters(,)
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
+        test_data = Pii('192,168,168,2')  # with incorrect delimiters(,)
         self.assertFalse(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
         test_data = Pii('1.2.3')  # incomplete address
         self.assertFalse(test_data.has_ipv4())
-        # test_data = Pii('My IP address is 192.168.1.1')  # test an address embedded inside sentence
-        # self.assertTrue(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
+
+        test_data = Pii('My IP address is 192.168.1.1')  # test an address embedded inside sentence
+        self.assertTrue(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'My IP address is [iPv4 address]')
 
     def test_has_ipv6(self):
         test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334')
@@ -125,7 +190,6 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv6())  # incorrect delimiter
         test_data = Pii('$001:0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertFalse(test_data.has_ipv6())  # invalid character ($) in first set of bytes
-
 
     def test_has_name(self):
         # test a valid name
