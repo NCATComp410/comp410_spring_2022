@@ -82,9 +82,9 @@ class DataTestCases(unittest.TestCase):
                          'My IP is [ipv4 address]')
         # Test a partial ipv4
         test_data = Pii('My IP is 87.43.552')
-        self.assertEqual(test_data.has_ipv4(anonymize=False))
+        self.assertEqual(test_data.has_ipv4())
         test_data = Pii('My IP is 192.343.2')
-        self.assertEqual(test_data.has_ipv4(anonymize=False))
+        self.assertEqual(test_data.has_ipv4())
 
         # Test an ipv4 with incorrect delimiters
         # TODO discuss changing requirements to support this
