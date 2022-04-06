@@ -47,7 +47,6 @@ class Pii(str):
     def has_name(self):
         match = re.search(r'[A-Z][a-z]{1,}\s[A-Z][a-z]{1,}', self)
         if match:
-            print(match)
             return True
         return False
 

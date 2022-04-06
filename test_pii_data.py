@@ -160,5 +160,5 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_pii(), None)
 
 
-if __name__ == '__main__':
-    unittest.main()
+    if __name__ == '__main__':
+        unittest.main()
