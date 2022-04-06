@@ -29,14 +29,14 @@ class Pii(str):
         return False
 
     def has_ipv6(self, anonymize=False):
-        newstr, count1 = re.subn(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+        newstr, count1 = re.subn(r'((\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
                                  r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
                                  r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                                 r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', [ipv6], self)
+                                 r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', '[ipv6]', self)
 
         if anonymize:
             return newstr
-        #else:
+        else:
             return bool(count1)
 
     def has_name(self):

@@ -106,7 +106,7 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_ipv6_anonymize(self):
         self.assertEqual(Pii('My ip address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334').has_ipv6(anonymize=True),
-                         'My ip address is [IPv6]')
+                         'My ip address is [ipv6]')
 
     def test_has_name(self):
         #Test case for valid name
