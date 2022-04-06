@@ -82,16 +82,16 @@ class DataTestCases(unittest.TestCase):
                          'My IP is [ipv4 address]')
         # Test a partial ipv4
         test_data = Pii('My IP is 87.43.552')
-        self.assertEqual(test_data.has_ipv4())
+        self.assertFalse(test_data.has_ipv4())
         test_data = Pii('My IP is 192.343.2')
-        self.assertEqual(test_data.has_ipv4())
+        self.assertFalse(test_data.has_ipv4())
 
         # Test an ipv4 with incorrect delimiters
         # TODO discuss changing requirements to support this
         test_data = Pii('My IP is 99-48-227-227')
-        self.assertEqual(test_data.has_ipv4(anonymize=False))
+        self.assertFalse(test_data.has_ipv4(anonymize=False))
         test_data = Pii('My IP is 192-433-1-1')
-        self.assertEqual(test_data.has_ipv4(anonymize=False))
+        self.assertFalse(test_data.has_ipv4(anonymize=False))
 
     def test_has_ipv6(self):
         # https: // www.ibm.com / docs / en / ts3500 - tape - library?topic = functionality - ipv4 - ipv6 - address - formats
