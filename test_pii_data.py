@@ -37,7 +37,6 @@ class DataTestCases(unittest.TestCase):
         data = read_data('sample_data.txt')
 
         self.assertEqual(data, expected_data)
-
     def test_has_us_phone(self):
         # Test a valid US phone number
         test_data = Pii('My phone number is 970-555-1212')
@@ -118,19 +117,29 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_name(), False)
 
 
+    def test_anonymize_has_street_address(self):
+        self.assertEqual(Pii('My Street Address is 123 Ocho St').has_street_address(anonymize=True),
+                         'My Street Address is [Street Address]')
+
+        self.assertEqual(Pii('My Sean Tisdale and I stay at is 989 Block Blvd').has_street_address(anonymize=True),
+                         'My Sean Tisdale and I stay at is [Street Address]')
+
+        self.assertEqual(Pii('77989 Block Blvd is invalid').has_street_address(anonymize=True),
+                         '77989 Block Blvd is invalid')
+
     def test_has_street_address(self):
-        test_data = Pii('123 Addy Rd')
+        test_data = Pii(' 123 Addy Rd')
         self.assertEqual(test_data.has_street_address(), True)
 
-        test_data = Pii('12356 Michellen Rd')
+        test_data = Pii(' 12356 Michellen Rd')
         self.assertEqual(test_data.has_street_address(), False)
          
-        test_data = Pii('123 pope Blvd')
+        test_data = Pii(' 123 pope Blvd')
         self.assertEqual(test_data.has_street_address(), False)
 
-        test_data = Pii('123 Rich Blvd')
+        test_data = Pii(' 123 Rich Blvd')
         self.assertEqual(test_data.has_street_address(), True)
-
+        
     def test_has_credit_card(self):
         test_data = Pii('My card is 1234-1234-1234-1234')
         self.assertTrue(test_data.has_credit_card())
