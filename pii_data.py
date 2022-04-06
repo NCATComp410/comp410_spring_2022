@@ -22,11 +22,12 @@ class Pii(str):
             return True
         return None
 
-    def has_ipv4(self):
-        match = re.search(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})', self) 
-        if match:
-            return True
-        return False
+    def has_ipv4(self, anonymize = False):
+        match = re.sub('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}','[ipv4 address]', self)
+        if anonymize:
+            return match
+        else:
+            return True if match != self else None
 
     def has_ipv6(self):
         match = re.search(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
@@ -91,8 +92,7 @@ if __name__ == '__main__':
     pii_data = Pii('My phone number is 123-123-1234')
     print(pii_data)
     
-    pii_data = Pii('My IPv4 is 99.48.227.227')
-    print(pii_data)
+
 
     if pii_data.has_pii():
         print('There is PII data preset')
