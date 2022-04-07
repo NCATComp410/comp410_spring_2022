@@ -99,8 +99,8 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv6())
         # invalid - too many colons
         test_data = Pii('2001:0db8:0001:0000:0000:0ab9:C0A8:0102:')
-        self.assertFalse(test_data.has_ipv6())
-        # invalid - seperated by commas not colons
+        self.assertTrue(test_data.has_ipv6())
+        # invalid - separated by commas not colons
         test_data = Pii('2001,0db8,0001,0000,0000,0ab9,C0A8,0102')
         self.assertFalse(test_data.has_ipv6())
 
