@@ -16,11 +16,22 @@ class Pii(str):
         else:
             return False
 
-    def has_email(self):
-        em = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self)
-        if em:
-            return True
-        return None
+    def has_email(self, anonymize = False):
+       # em = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self)
+        #if em:
+       #     return True
+        #return None
+        newstr, count1 = re.subn(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.]{2,}\b', '[email]', self)
+
+        print(newstr)
+        print (bool(count1))
+        if anonymize:
+            return newstr
+        else:
+           return bool(count1)
+
+    #def test_has_email_anonymize(self):
+
 
     def has_ipv4(self):
         match = re.search(r'(\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3})', self) 
@@ -61,13 +72,24 @@ class Pii(str):
             return True
         return False
 
-    def has_at_handle(self):
+    def has_at_handle(self, anonymize = False):
         #hand = re.search(r'^@[A-Za-z0-9._-]{1,}', self)
-        hand = re.search(r'^[\w@](?!.*?\.{2})[\w.]{1,28}[\w]$', self)
+        #hand = re.search(r'^[\w@](?!.*?\.{2})[\w.]{1,28}[\w]$', self)
 
-        if hand:
-            return True
-        return None
+        #r'^[\w@](?!.*?\.{2})[\w.]{1,28}[\w]$'
+
+        #hand = re.sub(r'[\@][A-z0-9][A-z0-9.]{0,15}', '[at handle]', self)
+        hand = re.sub(r'^[\w@](?!.*?\.{2})[\w.]{1,28}[\w]$', '[at handle]', self)
+
+        if anonymize:
+            return hand
+        else:
+            print(hand)
+            return True if hand != self else False
+
+        #if hand:
+        #    return True
+        #return None
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
