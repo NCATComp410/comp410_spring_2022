@@ -162,6 +162,7 @@ class DataTestCases(unittest.TestCase):
     def test_anonymize_has_email(self):
         self.assertEqual(Pii('@tentrell07').has_at_handle(anonymize=True), '[at handle]')
 
+
         self.assertEqual(Pii('@ten07').has_at_handle(anonymize=True), '[at handle]')
 
         self.assertEqual(Pii('My at handle is @tent%_rellyboii').has_at_handle(anonymize=True), 'My at handle is @tent%_rellyboii')
