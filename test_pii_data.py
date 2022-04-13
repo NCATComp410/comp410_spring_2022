@@ -107,6 +107,13 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('2001,0db8,0001,0000,0000,0ab9,C0A8,0102')
         self.assertFalse(test_data.has_ipv6())
 
+    def test_anonymize_name(self):
+        self.assertEqual(Pii('My name is Robert Hewey and I live on 123 Nocho Street').has_name(anonymize=True), 'My name is [name] and I live on 123 Nocho Street') 
+        self.assertEqual(Pii('Sean Tidale').has_name(anonymize=True), '[name]') 
+        self.assertEqual(Pii('789 Bob Rd is where Jack Howard lives notoriously').has_name(anonymize=True), '789 Bob Rd is where [name] lives notoriously') 
+        self.assertEqual(Pii('Jack Howard knows Hewbert Francis.').has_name(anonymize=True), '[name] knows [name].') 
+
+        
     def test_has_name(self):
         #Test case for valid name
         test_data = Pii('Sean Tisdale')

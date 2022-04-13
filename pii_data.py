@@ -45,11 +45,14 @@ class Pii(str):
         return False
         return None
 
-    def has_name(self):
-        match = re.search(r'[A-Z][a-z]{1,}\s[A-Z][a-z]{1,}', self)
-        if match:
-            return True
-        return False
+    def has_name(self, anonymize=False):
+        newstr, count1 = re.subn(r'(?<!\d\s)(?<=\s)[A-Z][a-z]{1,}\s[A-Z][a-z]{1,}', '[name]', self)
+        print(newstr)
+        print(count1)
+        if anonymize:
+            return newstr
+        else:
+            return bool(count1)
 
     def has_street_address(self, anonymize=False):
         newstr, count1 = re.subn(r'(?<=\s)\d{0,4}\s[A-Z][a-zA-Z]{2,30}\s\b(Ave|St|Blvd|Rd)\b', '[Street Address]', self)
