@@ -30,20 +30,16 @@ class Pii(str):
         else:
             return True if match != self else None
 
-    def has_ipv6(self):
-        match = re.search(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', self)
+    def has_ipv6(self, anonymize=False):
+        newstr, count1 = re.subn(r'((\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                                 r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                                 r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                                 r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', '[ipv6]', self)
 
-        # match = re.search(r'\b^[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b:'
-        #                   r'\b[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b:'
-        #                   r'\b[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b:'
-        #                   r'\b[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b', self)
-        if match:
-            return True
-        return False
-        return None
+        if anonymize:
+            return newstr
+        else:
+            return bool(count1)
 
     def has_name(self):
         match = re.search(r'[A-Z][a-z]{1,}\s[A-Z][a-z]{1,}', self)
