@@ -106,10 +106,16 @@ class DataTestCases(unittest.TestCase):
         # invalid - separated by commas not colons
         test_data = Pii('2001,0db8,0001,0000,0000,0ab9,C0A8,0102')
         self.assertFalse(test_data.has_ipv6())
-
+        
     def test_has_ipv6_anonymize(self):
         self.assertEqual(Pii('My ip address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334').has_ipv6(anonymize=True),
                          'My ip address is [ipv6]')
+
+    def test_anonymize_name(self):
+        self.assertEqual(Pii('My name is Robert Hewey and I live on 123 Nocho Street').has_name(anonymize=True), 'My name is [name] and I live on 123 Nocho Street') 
+        self.assertEqual(Pii('Sean Tidale').has_name(anonymize=True), '[name]') 
+        self.assertEqual(Pii('789 Bob Rd is where Jack Howard lives notoriously').has_name(anonymize=True), '789 Bob Rd is where [name] lives notoriously') 
+        self.assertEqual(Pii('Jack Howard knows Hewbert Francis.').has_name(anonymize=True), '[name] knows [name].') 
 
     def test_has_name(self):
         #Test case for valid name
@@ -124,13 +130,12 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('Sean ')
         self.assertEqual(test_data.has_name(), False)
 
-
     def test_anonymize_has_street_address(self):
         self.assertEqual(Pii('My Street Address is 123 Ocho St').has_street_address(anonymize=True),
-                         'My Street Address is [Street Address]')
+                         'My Street Address is [street address]')
 
         self.assertEqual(Pii('My Sean Tisdale and I stay at is 989 Block Blvd').has_street_address(anonymize=True),
-                         'My Sean Tisdale and I stay at is [Street Address]')
+                         'My Sean Tisdale and I stay at is [street address]')
 
         self.assertEqual(Pii('77989 Block Blvd is invalid').has_street_address(anonymize=True),
                          '77989 Block Blvd is invalid')
