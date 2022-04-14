@@ -37,7 +37,6 @@ class DataTestCases(unittest.TestCase):
         data = read_data('sample_data.txt')
 
         self.assertEqual(data, expected_data)
-
     def test_has_us_phone(self):
         # Test a valid US phone number
         test_data = Pii('My phone number is 970-555-1212')
@@ -77,25 +76,29 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_ipv4(self):
         test_data = Pii('My IP is 99.48.227.227')
-        self.assertEqual(test_data.has_ipv4(), True)
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'My IP is [ipv4 address]')
+        test_data = Pii('192.168.168.28')
+        self.assertTrue(test_data.has_ipv4())
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         '[ipv4 address]')
 
         test_data = Pii('My IP is 192.168.1.1')
-        self.assertEqual(test_data.has_ipv4(), True)
-
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'My IP is [ipv4 address]')
         # Test a partial ipv4
         test_data = Pii('My IP is 87.43.552')
-        self.assertEqual(test_data.has_ipv4(), False)
-
+        self.assertFalse(test_data.has_ipv4())
         test_data = Pii('My IP is 192.343.2')
-        self.assertEqual(test_data.has_ipv4(), False)
+        self.assertFalse(test_data.has_ipv4())
 
         # Test an ipv4 with incorrect delimiters
         # TODO discuss changing requirements to support this
         test_data = Pii('My IP is 99-48-227-227')
-        self.assertEqual(test_data.has_ipv4(), False)
-
+        self.assertFalse(test_data.has_ipv4(anonymize=False))
         test_data = Pii('My IP is 192-433-1-1')
-        self.assertEqual(test_data.has_ipv4(), False)
+        self.assertFalse(test_data.has_ipv4(anonymize=False))
 
     def test_has_ipv6(self):
         # https: // www.ibm.com / docs / en / ts3500 - tape - library?topic = functionality - ipv4 - ipv6 - address - formats
@@ -107,10 +110,20 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv6())
         # invalid - too many colons
         test_data = Pii('2001:0db8:0001:0000:0000:0ab9:C0A8:0102:')
-        self.assertFalse(test_data.has_ipv6())
-        # invalid - seperated by commas not colons
+        self.assertTrue(test_data.has_ipv6())
+        # invalid - separated by commas not colons
         test_data = Pii('2001,0db8,0001,0000,0000,0ab9,C0A8,0102')
         self.assertFalse(test_data.has_ipv6())
+        
+    def test_has_ipv6_anonymize(self):
+        self.assertEqual(Pii('My ip address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334').has_ipv6(anonymize=True),
+                         'My ip address is [ipv6]')
+
+    def test_anonymize_name(self):
+        self.assertEqual(Pii('My name is Robert Hewey and I live on 123 Nocho Street').has_name(anonymize=True), 'My name is [name] and I live on 123 Nocho Street') 
+        self.assertEqual(Pii('Sean Tidale').has_name(anonymize=True), '[name]') 
+        self.assertEqual(Pii('789 Bob Rd is where Jack Howard lives notoriously').has_name(anonymize=True), '789 Bob Rd is where [name] lives notoriously') 
+        self.assertEqual(Pii('Jack Howard knows Hewbert Francis.').has_name(anonymize=True), '[name] knows [name].') 
 
     def test_has_name(self):
         #Test case for valid name
@@ -125,20 +138,29 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('Sean ')
         self.assertEqual(test_data.has_name(), False)
 
+    def test_anonymize_has_street_address(self):
+        self.assertEqual(Pii('My Street Address is 123 Ocho St').has_street_address(anonymize=True),
+                         'My Street Address is [street address]')
+
+        self.assertEqual(Pii('My Sean Tisdale and I stay at is 989 Block Blvd').has_street_address(anonymize=True),
+                         'My Sean Tisdale and I stay at is [street address]')
+
+        self.assertEqual(Pii('77989 Block Blvd is invalid').has_street_address(anonymize=True),
+                         '77989 Block Blvd is invalid')
 
     def test_has_street_address(self):
-        test_data = Pii('123 Addy Rd')
+        test_data = Pii(' 123 Addy Rd')
         self.assertEqual(test_data.has_street_address(), True)
 
-        test_data = Pii('12356 Michellen Rd')
+        test_data = Pii(' 12356 Michellen Rd')
         self.assertEqual(test_data.has_street_address(), False)
          
-        test_data = Pii('123 pope Blvd')
+        test_data = Pii(' 123 pope Blvd')
         self.assertEqual(test_data.has_street_address(), False)
 
-        test_data = Pii('123 Rich Blvd')
+        test_data = Pii(' 123 Rich Blvd')
         self.assertEqual(test_data.has_street_address(), True)
-
+        
     def test_has_credit_card(self):
         test_data = Pii('My card is 1234-1234-1234-1234')
         self.assertTrue(test_data.has_credit_card())
@@ -171,5 +193,5 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_pii(), False)
 
 
-if __name__ == '__main__':
-    unittest.main()
+    if __name__ == '__main__':
+        unittest.main()
