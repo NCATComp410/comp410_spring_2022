@@ -161,6 +161,16 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('1345 chesnut steet')
         self.assertEqual(test_data.has_street_address(), None)
 
+    def test_has_street_address_anonymize(self):
+        test_data = Pii('My house is at 123 Chesnut Steet')
+        self.assertEqual(test_data.has_street_address(anonymize=True), 'My house is at [street address]')
+        test_data = Pii('1235 Willow Way')
+        self.assertEqual(test_data.has_street_address(anonymize=True), '[street address]')
+        test_data = Pii('Raden Lane')
+        self.assertEqual(test_data.has_street_address(anonymize=True), 'Raden Lane')
+        test_data = Pii('1345 chesnut steet')
+        self.assertEqual(test_data.has_street_address(anonymize=True), '1345 chesnut steet')
+
     def test_has_credit_card(self):
         test_data = Pii('My credit card number is 1929-1228-3455-3454')
         self.assertTrue(test_data.has_credit_card())

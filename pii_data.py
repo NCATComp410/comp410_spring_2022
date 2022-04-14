@@ -47,8 +47,12 @@ class Pii(str):
         else:
             return True if namestr != self else None
 
-    def has_street_address(self):
-        return True if re.search(r'[0-9]+\s[A-Z][a-z]+\s[A-Z][a-z]+', self) else None
+    def has_street_address(self, anonymize=False):
+        addstr = re.sub(r'[0-9]+\s[A-Z][a-z]+\s[A-Z][a-z]+', '[street address]', self)
+        if anonymize:
+            return addstr
+        else:
+            return True if addstr != self else None
 
     def has_credit_card(self, anonymize=False):
         newstr = re.sub(
