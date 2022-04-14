@@ -130,10 +130,10 @@ class DataTestCases(unittest.TestCase):
 
     def test_anonymize_has_street_address(self):
         self.assertEqual(Pii('My Street Address is 123 Ocho St').has_street_address(anonymize=True),
-                         'My Street Address is [Street Address]')
+                         'My Street Address is [street address]')
 
         self.assertEqual(Pii('My Sean Tisdale and I stay at is 989 Block Blvd').has_street_address(anonymize=True),
-                         'My Sean Tisdale and I stay at is [Street Address]')
+                         'My Sean Tisdale and I stay at is [street address]')
 
         self.assertEqual(Pii('77989 Block Blvd is invalid').has_street_address(anonymize=True),
                          '77989 Block Blvd is invalid')
