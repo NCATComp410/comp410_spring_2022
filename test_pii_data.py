@@ -141,6 +141,16 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('rodger samson')
         self.assertEqual(test_data.has_name(), None)
 
+    def test_has_name_anonymize(self):
+        test_data = Pii('My name is Alex Red')
+        self.assertEqual(test_data.has_name(anonymize=True), 'My name is [name]')
+        test_data = Pii('William Dane')
+        self.assertEqual(test_data.has_name(anonymize=True), '[name]')
+        test_data = Pii('kate')
+        self.assertEqual(test_data.has_name(anonymize=True), 'kate')
+        test_data = Pii('rodger samson')
+        self.assertEqual(test_data.has_name(anonymize=True), 'rodger samson')
+
     def test_has_street_address(self):
         test_data = Pii('My house is at 123 Chesnut Steet')
         self.assertEqual(test_data.has_street_address(), True)

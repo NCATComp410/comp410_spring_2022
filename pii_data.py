@@ -40,8 +40,12 @@ class Pii(str):
             return True
         return False
 
-    def has_name(self):
-        return True if re.search(r'[A-Z][a-z]+\s[A-Z][a-z]+', self) else None
+    def has_name(self, anonymize=False):
+        namestr = re.sub(r'[A-Z][a-z]+\s[A-Z][a-z]+', '[name]', self)
+        if anonymize:
+            return namestr
+        else:
+            return True if namestr != self else None
 
     def has_street_address(self):
         return True if re.search(r'[0-9]+\s[A-Z][a-z]+\s[A-Z][a-z]+', self) else None
