@@ -61,10 +61,18 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_email(), True)
 
         test_data = Pii('My email is kavondean.com')
-        self.assertEqual(test_data.has_email(), None)
+        self.assertEqual(test_data.has_email(), False)
 
         test_data = Pii('My email is kavondeangmail.com')
-        self.assertEqual(test_data.has_email(), None)
+        self.assertEqual(test_data.has_email(), False)
+
+    def test_anonymize_has_email(self):
+        self.assertEqual(Pii('My email is kxdean@aggies.ncat.edu').has_email(anonymize=True), 'My email is [email]')
+
+        self.assertEqual(Pii('My email is kavondeangmail.com').has_email(anonymize=True), 'My email is kavondeangmail.com')
+
+        self.assertEqual(Pii('My email is kavon.dean@gmail.com').has_email(anonymize=True), 'My email is [email]')
+
 
     def test_has_ipv4(self):
         test_data = Pii('My IP is 99.48.227.227')
@@ -168,14 +176,21 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_at_handle(), True)
 
         test_data = Pii('t@entrell07+%-bro')
-        self.assertEqual(test_data.has_at_handle(), None)
+        self.assertEqual(test_data.has_at_handle(), False)
 
         test_data = Pii('@tent%_rellyboii')
-        self.assertEqual(test_data.has_at_handle(), None)
+        self.assertEqual(test_data.has_at_handle(), False)
+
+    def test_anonymize_has_email(self):
+        self.assertEqual(Pii('@tentrell07').has_at_handle(anonymize=True), '[at handle]')
+
+        self.assertEqual(Pii('@ten07').has_at_handle(anonymize=True), '[at handle]')
+
+        self.assertEqual(Pii('My at handle is @tent%_rellyboii').has_at_handle(anonymize=True), 'My at handle is @tent%_rellyboii')
 
     def test_has_pii(self):
         test_data = Pii()
-        self.assertEqual(test_data.has_pii(), None)
+        self.assertEqual(test_data.has_pii(), False)
 
 
     if __name__ == '__main__':
