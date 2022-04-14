@@ -102,10 +102,14 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv6())
         # invalid - too many colons
         test_data = Pii('2001:0db8:0001:0000:0000:0ab9:C0A8:0102:')
-        self.assertFalse(test_data.has_ipv6())
-        # invalid - seperated by commas not colons
+        self.assertTrue(test_data.has_ipv6())
+        # invalid - separated by commas not colons
         test_data = Pii('2001,0db8,0001,0000,0000,0ab9,C0A8,0102')
         self.assertFalse(test_data.has_ipv6())
+        
+    def test_has_ipv6_anonymize(self):
+        self.assertEqual(Pii('My ip address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334').has_ipv6(anonymize=True),
+                         'My ip address is [ipv6]')
 
     def test_anonymize_name(self):
         self.assertEqual(Pii('My name is Robert Hewey and I live on 123 Nocho Street').has_name(anonymize=True), 'My name is [name] and I live on 123 Nocho Street') 
@@ -113,7 +117,6 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(Pii('789 Bob Rd is where Jack Howard lives notoriously').has_name(anonymize=True), '789 Bob Rd is where [name] lives notoriously') 
         self.assertEqual(Pii('Jack Howard knows Hewbert Francis.').has_name(anonymize=True), '[name] knows [name].') 
 
-        
     def test_has_name(self):
         #Test case for valid name
         test_data = Pii('Sean Tisdale')
@@ -126,7 +129,6 @@ class DataTestCases(unittest.TestCase):
          #Test case for invalid first name only
         test_data = Pii('Sean ')
         self.assertEqual(test_data.has_name(), False)
-
 
     def test_anonymize_has_street_address(self):
         self.assertEqual(Pii('My Street Address is 123 Ocho St').has_street_address(anonymize=True),
