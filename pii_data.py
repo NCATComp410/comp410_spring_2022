@@ -8,14 +8,15 @@ class Pii(str):
     # https://regex101.com
     # https://www.w3schools.com/python/python_regex.asp
 
-    def has_us_phone(self):
-        if re.search(r'\d{9}', self):
-            return True
-        # Match a US phone number ddd-ddd-dddd ie 123-456-7890
-        elif re.search(r'\d{3}[-.]\d{3}[-.]\d{4}', self):
-            return True
+    def has_us_phone(self, anonymize=False):
+        newstr, count1 = re.subn(r'\d{9}', '[us phone]', self)
+
+        newstr, count2 = re.subn(r'\d{3}[-.]\d{3}[-.]\d{4}', '[us phone]', newstr)
+
+        if anonymize:
+            return newstr
         else:
-            return False
+            return bool(count2 + count1)
 
     def has_email(self, anonymize = False):
        # em = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self)
@@ -30,9 +31,6 @@ class Pii(str):
             return newstr
         else:
            return bool(count1)
-
-    #def test_has_email_anonymize(self):
-
 
     def has_ipv4(self, anonymize = False):
         match = re.sub('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}','[ipv4 address]', self)
@@ -114,11 +112,14 @@ if __name__ == '__main__':
     data = read_data('sample_data.txt')
     print(data)
     print('---')
+    #debug phone number anon
+    pii_data = Pii('My phone number is 123-123-1234')
+    print(pii_data.has_us_phone(True))
+    
+
 
     pii_data = Pii('My phone number is 123-123-1234')
     print(pii_data)
-    
-
 
     if pii_data.has_pii():
         print('There is PII data preset')
