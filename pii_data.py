@@ -8,7 +8,6 @@ class Pii(str):
     # https://regex101.com
     # https://www.w3schools.com/python/python_regex.asp
 
-<<<<<<< HEAD
     def has_us_phone(self, anonymize=False):
         newstr, count1 = re.subn(r'\d{9}', '[us phone]', self)
 
@@ -16,14 +15,6 @@ class Pii(str):
 
         if anonymize:
             return newstr
-=======
-    def has_us_phone(self):
-        if re.search(r'\d{9}', self):
-            return True
-        # Match a US phone number ddd-ddd-dddd ie 123-456-7890
-        elif re.search(r'\d{3}[-.]\d{3}[-.]\d{4}', self):
-            return True
->>>>>>> 11017be24ce5bc5ab4c5cc59e94fc1c37d012b3e
         else:
             return bool(count2 + count1)
 
@@ -41,22 +32,12 @@ class Pii(str):
         else:
            return bool(count1)
 
-    #def test_has_email_anonymize(self):
-
-
-<<<<<<< HEAD
-        if match:
-            return True
-        return False
-        return None
-=======
     def has_ipv4(self, anonymize = False):
         match = re.sub('\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}','[ipv4 address]', self)
         if anonymize:
             return match
         else:
             return True if match != self else None
->>>>>>> 11017be24ce5bc5ab4c5cc59e94fc1c37d012b3e
 
     def has_ipv6(self, anonymize=False):
         newstr, count1 = re.subn(r'((\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
