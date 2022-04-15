@@ -55,6 +55,9 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('My phone number is 970.555.1212')
         self.assertFalse(test_data.has_us_phone())
 
+    def test_has_us_phone_anonymize(self):
+        test_data = Pii('My phone number is 970-555-1212')
+        self.assertEqual(test_data.has_us_phone(anonymize=True), 'My phone number is [us phone]')
 
     def test_has_email(self):
         test_data = Pii('My email is user@doamin.com')
