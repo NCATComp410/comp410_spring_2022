@@ -22,11 +22,14 @@ class Pii(str):
             return True
         return False
 
-    def has_ipv4(self):
+    def has_ipv4(self, anonymize = False):
         # Match a typical ipv4 address
-        match = re.search(r'(?:[0-9]{1,3}\.){3}[0-9]{1,3}', self)
-        if match:
-            return True
+        match = re.sub(r'(?:[0-9]{1,3}\.){3}[0-9]{1,3}', "[ipv4 address]", self)
+        if anonymize:
+            return match
+        else:
+            if match != self:
+                return True
         return False
 
     def has_ipv6(self):
@@ -41,11 +44,14 @@ class Pii(str):
             return True 
         return False
 
-    def has_name(self):
+    def has_name(self, anonymize = False):
         # Match a name that is capitalized
-        match = re.search(r'[A-Z][a-z\-\']+\s[A-Z][a-z\-\']+', self)
-        if match:
-            return True
+        match = re.sub(r'[A-Z][a-zA-Z\-\']+\s[A-Z][a-zA-Z\-\']+', "[name]", self)
+        if anonymize:
+            return match
+        else:
+            if match != self:
+                return True
         return False
 
     def has_street_address(self):
