@@ -44,14 +44,15 @@ class Pii(str):
                                r'{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
                                r'([^.^[0-9])*\b', '[iPv4 address]', ipv4)
 
+
         # 255.255.255.255 is already preserved for broadcasting and would be valid
         if self.__eq__('255.255.255.255') | self.__eq__('0.0.0.0'):
             if anonymize:
-                return ipv4
+                return self
             return False
         elif anonymize:
             if count1 == 0 and count2 == 0:
-                return "Invalid address"
+                return self
             return ipv4
         return bool(count2 + count1)
 
@@ -101,7 +102,8 @@ class Pii(str):
         return False
 
     def has_at_handle(self):
-        return None
+        # search "@"
+        return True if re.search(r'(^|\s)@[\w._%+-]+', self) else False
 
     def has_ssn(self):
         return True if re.search(r'\d{3}-\d{2}-\d{4}', self) else False
