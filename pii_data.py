@@ -1,7 +1,5 @@
 import re
 
-
-
 # PII = Personally Identifiable Information
 # Create a new Pii class based on str
 class Pii(str):
