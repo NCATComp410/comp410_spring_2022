@@ -114,6 +114,21 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('145')  # incomplete address
         self.assertFalse(test_data.has_ipv4())
 
+    def test_has_ipv4_an(self):
+        #Successful test cases
+        test_data = Pii('222.33.100.12')
+        self.assertEqual(test_data.has_ipv4(anonymize = True), '[ipv4]')
+
+        test_data = Pii('45.68.195.254')
+        self.assertEqual(test_data.has_ipv4(anonymize = True), '[ipv4]')
+
+        # Test values are out of the range for allowed addresses
+        test_data = Pii('300.22.555.256')
+        self.assertEqual(test_data.has_ipv4(anonymize = True), '300.22.555.256')
+
+        # Test wrong format
+        test_data = Pii('145')  # incomplete address
+        self.assertEqual(test_data.has_ipv4(anonymize = True), '145')
 
     def test_has_ipv6(self):
         # test a valid address
