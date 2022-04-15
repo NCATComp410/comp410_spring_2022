@@ -131,6 +131,24 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv6())  
         test_data = Pii('r445:rtyu:vd45:nmkl:af24:kb78')
 
+
+    def test_has_ipv6a(self):
+        # test a valid address
+        test_data = Pii('0045:Fa34:53d9:4d53:0020:0000:6491:8485')
+        self.assertEqual(test_data.has_ipv6(anonymize = True), '[ipv6]')  
+
+        test_data = Pii('0000::5248:ee43::8789:1234:1200')
+        self.assertEqual(test_data.has_ipv6(anonymize = True), '[ipv6]')  
+
+        # test an invalid address with to many digits in segment
+        test_data = Pii('00000:::::')
+        self.assertEqual(test_data.has_ipv6(anonymize = True), '00000:::::')        
+        
+        # test an invalid address w letter outside of bounds
+        test_data = Pii('r445:rtyu:vd45:nmkl:af24:kb78')
+        self.assertEqual(test_data.has_ipv6(anonymize = True), 'r445:rtyu:vd45:nmkl:af24:kb78')  
+        
+
     def test_has_name(self):
         test_data = Pii('My name is Alex Red')
         self.assertEqual(test_data.has_name(), True)

@@ -30,15 +30,17 @@ class Pii(str):
             return True
         return False
 
-    def has_ipv6(self):
+    def has_ipv6(self, anonymize = False):
         # There are 8 avaliable chunks to place IP data also allowing for no data to be input. Covers 0-9,a-f, and A-F
-        match = re.search(r'(^(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
+ 
+        match = re.sub(r'(^(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
                           r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
                           r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
-                          r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?$)', self)
-        if match:
-            return True
-        return False
+                          r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?$)', '[ipv6]', self)
+        if anonymize:
+            return match
+        else:
+            return True if match != self else None
 
     def has_name(self):
         return True if re.search(r'[A-Z][a-z]+\s[A-Z][a-z]+', self) else None
