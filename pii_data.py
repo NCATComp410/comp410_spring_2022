@@ -7,14 +7,16 @@ class Pii(str):
     # For help with regex see
     # https://regex101.com
     # https://www.w3schools.com/python/python_regex.asp
-    def has_us_phone(self):
-        if re.search(r'\d{9}', self):
-            return True
-        # Match a US phone number ddd-ddd-dddd ie 123-456-7890
-        elif re.search(r'\d{3}[-.]\d{3}[-.]\d{4}', self):
-            return True
+
+    def has_us_phone(self, anonymize=False):
+        newstr, count1 = re.subn(r'\d{9}', '[us phone]', self)
+
+        newstr, count2 = re.subn(r'\d{3}[-.]\d{3}[-.]\d{4}', '[us phone]', newstr)
+
+        if anonymize:
+            return newstr
         else:
-            return False
+            return bool(count2 + count1)
 
     def has_email(self):
         em = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self)
@@ -34,10 +36,6 @@ class Pii(str):
                            r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
                            r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', self)
 
-        # match = re.search(r'\b^[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b:'
-        #                   r'\b[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b:'
-        #                   r'\b[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b:'
-        #                   r'\b[0-9a-fA-F]{0,4}\b:\b[0-9a-fA-F]{0,4}\b', self)
         if match:
             return True
         return False
@@ -87,11 +85,14 @@ if __name__ == '__main__':
     data = read_data('sample_data.txt')
     print(data)
     print('---')
-
+    #debug phone number anon
     pii_data = Pii('My phone number is 123-123-1234')
-    print(pii_data)
+    print(pii_data.has_us_phone(True))
     
     pii_data = Pii('My IPv4 is 99.48.227.227')
+    print(pii_data)
+
+    pii_data = Pii('My phone number is 123-123-1234')
     print(pii_data)
 
     if pii_data.has_pii():

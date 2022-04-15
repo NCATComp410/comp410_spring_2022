@@ -51,6 +51,32 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('My phone number is 970.555.1212')
         self.assertTrue(test_data.has_us_phone())
 
+    def test_has_us_phone_anonymize(self):
+        # Valid Cases
+        self.assertEqual(Pii('My phone number is 970-555-1212').has_us_phone(anonymize=True),
+                         'My phone number is [us phone]')
+        # period delimiter
+        self.assertEqual(Pii('My phone number is 970.555.1212').has_us_phone(anonymize=True),
+                         'My phone number is [us phone]')
+        # 2 numbers in one sentence
+        self.assertEqual(Pii('My phone number is 970-555-1212 and my other number is 879-000-9889').has_us_phone(anonymize=True),
+                         'My phone number is [us phone] and my other number is [us phone]')
+        # number at beginning of sentence
+        self.assertEqual(Pii('123-123-4567 is a number').has_us_phone(anonymize=True),
+                         '[us phone] is a number')
+        # Invalid Cases
+        # wrong delimiter format
+        self.assertEqual(Pii('My phone number is 970555-1212').has_us_phone(anonymize=True),
+                         'My phone number is 970555-1212')
+        # another wrong format
+        self.assertEqual(Pii('My phone number is 970--555-1212').has_us_phone(anonymize=True),
+                         'My phone number is 970--555-1212')
+        # too few numbers
+        self.assertEqual(Pii('My phone number is 970-555-1').has_us_phone(anonymize=True),
+                         'My phone number is 970-555-1')
+         # alpha character in number
+        self.assertEqual(Pii('My phone number is 970-555-121a2').has_us_phone(anonymize=True),
+                         'My phone number is 970-555-121a2')
     def test_has_email(self):
         test_data = Pii('My email is kavondean@gmail.com')
         self.assertEqual(test_data.has_email(), True)
