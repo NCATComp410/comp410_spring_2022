@@ -54,16 +54,16 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_email(self):
         test_data = Pii('My email is user@domain.com')
-        self.assertEqual(test_data.has_email(), True)
+        self.assertEqual(test_data.has_email(anonymize=True), "My email is [email address].com")
 
         test_data = Pii('My email is user.name@domain.com')
-        self.assertEqual(test_data.has_email(), True)
+        self.assertEqual(test_data.has_email(anonymize=True), "My email is [email address].com")
 
         test_data = Pii('My email is user@domain.site.com')
-        self.assertEqual(test_data.has_email(), True)
+        self.assertEqual(test_data.has_email(anonymize=True), "My email is [email address].site.com")
 
         test_data = Pii('My email is userdomain.com')
-        self.assertEqual(test_data.has_email(), False)
+        self.assertEqual(test_data.has_email(anonymize=True), "My email is userdomain.com")
 
     def test_has_ipv4(self):
 
