@@ -14,12 +14,14 @@ class Pii(str):
             return True
         return False
 
-    #Implemented by Caleb Williams
-    def has_email(self):
+    def has_email(self, anonymize = False):
         #Match a typical email string@string.string
-        match = re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self)
-        if match:
-            return True
+        match = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b',"[email address]",self)
+        if anonymize:
+            return match
+        else:
+            if match != self:
+                return True
         return False
 
     def has_ipv4(self):
