@@ -69,19 +69,19 @@ class DataTestCases(unittest.TestCase):
 
         #Valid ip address
         test_data = Pii('This is an IP address: 192.142.42.32')
-        self.assertTrue(test_data.has_ipv4())
+        self.assertEqual(test_data.has_ipv4( anonymize = True ), "This is an IP address: [ipv4 address]")
 
         # Valid ip Address
         test_data = Pii('This is an IP address: 1.1.1.1')
-        self.assertTrue(test_data.has_ipv4())
+        self.assertEqual(test_data.has_ipv4( anonymize = True ), "This is an IP address: [ipv4 address]")
 
         # Incomplete address
         test_data = Pii('This is an IP address: 142.42.32')
-        self.assertFalse(test_data.has_ipv4())
+        self.assertEqual(test_data.has_ipv4( anonymize = True ), "This is an IP address: 142.42.32")
 
         # Non numbers in ip address
         test_data = Pii('This is an IP address: 1.X.X.1')
-        self.assertFalse(test_data.has_ipv4())
+        self.assertEqual(test_data.has_ipv4( anonymize = True ), "This is an IP address: 1.X.X.1")
 
     def test_has_ipv6(self):
         # test valid test cases
@@ -97,16 +97,16 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_name(self):
         test_data = Pii('My name is Alexander Hamilton.')
-        self.assertTrue(test_data.has_name())
+        self.assertEqual(test_data.has_name( anonymize = True ), "My name is [name].")
 
         test_data = Pii("His name is Marc'o O'Reilly-Villa.")
-        self.assertTrue(test_data.has_name())
+        self.assertEqual(test_data.has_name( anonymize = True ), "His name is [name].")
 
         test_data = Pii('Her name is Janet jackson.')
-        self.assertFalse(test_data.has_name())
+        self.assertEqual(test_data.has_name( anonymize = True ), "Her name is Janet jackson.")
 
         test_data = Pii("Their name is not in this test.")
-        self.assertFalse(test_data.has_name())
+        self.assertEqual(test_data.has_name( anonymize = True ), "Their name is not in this test.")
         
     def test_has_street_address(self):
         # test case valid
