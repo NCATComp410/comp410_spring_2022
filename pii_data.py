@@ -23,10 +23,12 @@ class Pii(str):
             # a us phone number was present or not.
             return bool(count2 + count1)
 
-    def has_email(self):
+    def has_email(self, anonymize=False):
         # Match a user's email
-        validemail = re.search(r'^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$', self)
-        if validemail:
+        validemail = re.sub(r'[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+', '[email]', self)
+        if anonymize:
+            return validemail
+        if '[email]' in validemail:
             return True
         return False
 
@@ -80,19 +82,26 @@ class Pii(str):
         return bool(count + count0)
 
 
-    def has_name(self):
+    def has_name(self, anonymize=False):
         # match the user's name
-        match = re.search(r'^[a-zA-Z]{2,}\s[a-zA-Z]', self)
-        if match:
-            return True
+        match = re.sub(r'^[A-Z][a-z]+\s[A-Z][a-z]+', '[name]', self)
+        if anonymize:
+            return match
+        else:
+            if '[name]' in match:
+                return True
         return False
 
-    def has_street_address(self):
+    def has_street_address(self, anonymize=False):
         # match the user's address
-        match = re.search(r'^[0-9]{3,4}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', self)
-        if match:
-            return True
+        match = re.sub(r'^[0-9]{3,4}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
+        if anonymize:
+            return match
+        else:
+            if '[street address]' in match:
+                return True
         return False
+
 
     def has_credit_card(self):
         # match a standard credit card number

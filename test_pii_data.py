@@ -61,6 +61,14 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('john@gmail')
         self.assertFalse(test_data.has_email())
 
+    def test_has_email_anoynomize(self):
+        #Anoymize a valid email
+        self.assertEqual(Pii('My email is johnsmith@gmail.com').has_email(anonymize=True), 'My email is [email]')
+
+        #Anoymize an invalid email
+        self.assertEqual(Pii('My email is johnsmithgmail.com').has_email(anonymize=True), 'My email is johnsmithgmail.com')
+
+
     def test_has_ipv4(self):
         # Test a valid address
         test_data = Pii('192.168.168.28')
@@ -200,10 +208,20 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('John Doe')
         self.assertEqual(test_data.has_name(), True)
 
+    def test_has_name_anonymize(self):
+        # test a valid name
+        test_data = Pii('John Doe')
+        self.assertEqual(test_data.has_name(anonymize=True), '[name]')
+
     def test_has_street_address(self):
         # test a valid street address
         test_data = Pii('1234 Nowhere Street')
         self.assertEqual(test_data.has_street_address(), True)
+
+    def test_has_street_address_anonymize(self):
+        # test a valid street address
+        test_data = Pii('1234 Nowhere Street')
+        self.assertEqual(test_data.has_street_address(anonymize=True), '[street address]')
 
     def test_has_credit_card(self):
         # Test case for a valid credit card
