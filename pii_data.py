@@ -1,15 +1,5 @@
 import re
 
-def has_email(self, anonymize = False):
-    # return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
-new, count = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.]{2,}\b', '[email]', self)
-
-        print(new)
-        print (bool(count))
-        if anonymize:
-            return new
-        else:
-           return bool(count)
 
 # PII = Personally Identifiable Information
 # Create a new Pii class based on str
@@ -26,8 +16,16 @@ class Pii(str):
         else:
             return True if newstr != self else None
 
-    def has_email(self):
-        return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
+    def has_email(self, anonymize=False):
+        # return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
+        new, count = re.subn(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.]{2,}\b', '[email]', self)
+
+        print(new)
+        print(bool(count))
+        if anonymize:
+            return new
+        else:
+            return bool(count)
 
     def has_ipv4(self, anonymize = False):
         # the 4 values in the IP address are from 0-255 for each segment each line is 1 segment
