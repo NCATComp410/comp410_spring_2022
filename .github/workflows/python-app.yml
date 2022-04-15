@@ -5,8 +5,6 @@ name: Python application
 
 on:
   push:
-    branches: [ main ]
-   
     branches: [ wall_e ]
   pull_request:
     branches: [ wall_e ]
