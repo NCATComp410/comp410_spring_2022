@@ -16,8 +16,16 @@ class Pii(str):
         else:
             return True if newstr != self else None
 
-    def has_email(self):
-        return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
+    def has_email(self, anonymize=False):
+        # return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
+        new, count = re.subn(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.]{2,}\b', '[email]', self)
+
+        print(new)
+        print(bool(count))
+        if anonymize:
+            return new
+        else:
+            return bool(count)
 
     def has_ipv4(self, anonymize = False):
         # the 4 values in the IP address are from 0-255 for each segment each line is 1 segment
@@ -32,7 +40,7 @@ class Pii(str):
 
     def has_ipv6(self, anonymize = False):
         # There are 8 avaliable chunks to place IP data also allowing for no data to be input. Covers 0-9,a-f, and A-F
- 
+
         match = re.sub(r'(^(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
                           r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
                           r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
