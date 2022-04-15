@@ -68,7 +68,7 @@ class DataTestCases(unittest.TestCase):
         print("\n" + test_data.has_ipv4(True))
 
         # Test address inside string
-        test_data = Pii('I have a different address 192.168.163.2 ')
+        test_data = Pii('I have a different address 192.168.163.2')
         self.assertTrue(test_data.has_ipv4())
         print("\n" + test_data.has_ipv4(True))
 
@@ -136,28 +136,32 @@ class DataTestCases(unittest.TestCase):
     def test_has_ipv6(self):
         test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test a valid address
+        print("\n" + test_data.has_ipv6(True))
+
+        test_data = Pii('My IP address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334')
+        self.assertTrue(test_data.has_ipv6())  # test a valid address with string
+        print("\n" + test_data.has_ipv6(True))
+
         test_data = Pii(':0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test another valid address with empty first 16 bytes
+        print("\n" + test_data.has_ipv6(True))
+
         test_data = Pii(':0db8::0000::8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test another valid address with multiple emtpy 16 byte chunks
+        print("\n" + test_data.has_ipv6(True))
+
         test_data = Pii(':::::::')
         self.assertFalse(test_data.has_ipv6())  # test a preserved address
+        print("\n" + test_data.has_ipv6(True))
+
         test_data = Pii('0:0:0:0:0:0:0:0')
         self.assertFalse(test_data.has_ipv6())  # test a preserved address
-        test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334:')
-        self.assertFalse(test_data.has_ipv6())  # test an invalid address with extra colon
-        test_data = Pii('2001:0db8:85a3:0000:0000:8a2e')
-        self.assertFalse(test_data.has_ipv6())  # test an invalid incomplete address
-        test_data = Pii(':2001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # extra colon at beginning of invalid address
-        test_data = Pii('G001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # invalid characters in invalid address ('G' in first set of bytes)
-        test_data = Pii('02001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # extra digit on first 16 bytes
+        print("\n" + test_data.has_ipv6(True))
+
         test_data = Pii('2001.0db8.85a3.0000.0000.8a2e.0370.7334')
         self.assertFalse(test_data.has_ipv6())  # incorrect delimiter
-        test_data = Pii('$001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # invalid character ($) in first set of bytes
+        print("\n" + test_data.has_ipv6(True))
+
 
     def test_has_name(self):
         # test a valid name
