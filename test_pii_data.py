@@ -196,7 +196,7 @@ class DataTestCases(unittest.TestCase):
         self.assertTrue(test_data.has_ipv6())  # test another valid address with multiple emtpy 16 byte chunks
         # Test anonymize
         self.assertEqual(test_data.has_ipv6(anonymize=True),
-                         test_data)
+                         '[iPv6 address]')
 
         test_data = Pii(':::::::')
         self.assertFalse(test_data.has_ipv6())  # test a preserved address
