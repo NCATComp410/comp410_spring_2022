@@ -184,7 +184,7 @@ class DataTestCases(unittest.TestCase):
         self.assertTrue(test_data.has_ipv6())  # test a valid address with string
         # Test anonymize
         self.assertEqual(test_data.has_ipv6(anonymize=True),
-                         'My IP address is [iPv4 address]')
+                         'My IP address is [iPv6 address]')
 
         test_data = Pii(':0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test another valid address with empty first 16 bytes
