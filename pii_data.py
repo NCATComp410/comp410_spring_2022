@@ -48,7 +48,7 @@ class Pii(str):
 
 
         # 255.255.255.255 is already preserved for broadcasting and would be valid
-        if self.__eq__('255.255.255.255') | self.__eq__('0.0.0.0'):
+        if self.__eq__('255.255.255.255') or self.__eq__('0.0.0.0'):
             if anonymize:
                 return self
             return False
