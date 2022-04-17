@@ -176,31 +176,45 @@ class DataTestCases(unittest.TestCase):
     def test_has_ipv6(self):
         test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test a valid address
-        print("\n" + test_data.has_ipv6(True))
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         '[iPv6 address]')
 
         test_data = Pii('My IP address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test a valid address with string
-        print("\n" + test_data.has_ipv6(True))
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'My IP address is [iPv4 address]')
 
         test_data = Pii(':0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test another valid address with empty first 16 bytes
-        print("\n" + test_data.has_ipv6(True))
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
 
         test_data = Pii(':0db8::0000::8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test another valid address with multiple emtpy 16 byte chunks
-        print("\n" + test_data.has_ipv6(True))
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
 
         test_data = Pii(':::::::')
         self.assertFalse(test_data.has_ipv6())  # test a preserved address
-        print("\n" + test_data.has_ipv6(True))
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'Invalid address')
 
         test_data = Pii('0:0:0:0:0:0:0:0')
         self.assertFalse(test_data.has_ipv6())  # test a preserved address
-        print("\n" + test_data.has_ipv6(True))
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         'Invalid address')
 
         test_data = Pii('2001.0db8.85a3.0000.0000.8a2e.0370.7334')
         self.assertFalse(test_data.has_ipv6())  # incorrect delimiter
-        print("\n" + test_data.has_ipv6(True))
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv4(anonymize=True),
+                         test_data)
 
 
     def test_has_name(self):
