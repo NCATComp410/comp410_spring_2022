@@ -214,7 +214,7 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv6())  # incorrect delimiter
         # Test anonymize
         self.assertEqual(test_data.has_ipv6(anonymize=True),
-                         test_data)
+                         'Invalid address')
 
 
     def test_has_name(self):
