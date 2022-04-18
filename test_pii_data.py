@@ -187,6 +187,10 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii(' 123 Rich Blvd')
         self.assertEqual(test_data.has_street_address(), True)
 
+    def test_has_credit_card_anonymize(self):
+        self.assertEqual(Pii('My credit card number is 9702-5552-1212-1234').has_credit_card(anonymize=True),
+                         'My credit card number is [credit card]')
+
     def test_has_credit_card(self):
         test_data = Pii('My card is 1234-1234-1234-1234')
         self.assertTrue(test_data.has_credit_card())
