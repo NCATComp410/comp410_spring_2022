@@ -40,11 +40,17 @@ class Pii(str):
     def has_street_address(self):
         return None
 
-    def has_credit_card(self):
-        match = re.search(r'\d{4}-\d{4}-\d{4}-\d{4}', self)
-        if match:
-            return True
-        return False
+    def has_credit_card(self, anonymize = True):
+        newstr, count1 = re.subn(r'\d{4}-\d{4}-\d{4}-\d{4}', '[credit card]', self)
+
+        if anonymize:
+            # Since str is immutable it's better to stay with the spec and return a new
+            # string rather than modifying self
+            return newstr
+        else:
+            # Keep the original requirement in place by returning True or False if
+            # a us phone number was present or not.
+            return bool(count1)
 
     def has_at_handle(self):
         return None
