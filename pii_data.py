@@ -114,8 +114,17 @@ class Pii(str):
         # search "@"
         return True if re.search(r'(^|\s)@[\w._%+-]+', self) else False
 
-    def has_ssn(self):
-        return True if re.search(r'\d{3}-\d{2}-\d{4}', self) else False
+
+    def has_ssn(self, anonymize= False):
+        match = re.sub(r'\d{3}-\d{2}-\d{4}','[ssn number]', self)
+	if anonymize:
+            return match
+        else:
+            if '[ssn number]' in match:
+                return True
+        return False
+
+
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
