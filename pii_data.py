@@ -40,7 +40,7 @@ class Pii(str):
     def has_street_address(self):
         return None
 
-    def has_credit_card(self, anonymize = True):
+    def has_credit_card(self, anonymize = False):
         newstr, count1 = re.subn(r'\d{4}-\d{4}-\d{4}-\d{4}', '[credit card]', self)
 
         if anonymize:
