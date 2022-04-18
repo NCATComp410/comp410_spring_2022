@@ -48,7 +48,7 @@ class Pii(str):
 
 
         # 255.255.255.255 is already preserved for broadcasting and would be valid
-        if self.__eq__('255.255.255.255') | self.__eq__('0.0.0.0'):
+        if self.__eq__('255.255.255.255') or self.__eq__('0.0.0.0'):
             if anonymize:
                 return self
             return False
@@ -58,16 +58,29 @@ class Pii(str):
             return ipv4
         return bool(count2 + count1)
 
-    def has_ipv6(self):
-        match = re.search(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                          r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                          r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                          r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', self)
+    def has_ipv6(self, anonymize=False):
+
+        ipv6, count = re.subn(r'((\w((?:[0-9a-fA-F]?){0,4}:)|(:)){7}((?:[0-9a-fA-F]?){0,4}))([^:[0-9a-fA-F]])*',
+                              '[iPv6 address]', self)
+
+        ipv6, count0 = re.subn(r'((\w((?:[0-9a-fA-F]?){0,4}:)|(:)){7}((?:[0-9a-fA-F]?){0,4}))([^:[0-9a-fA-F]])*',
+                               '[iPv6 address]', ipv6)
         if self.__eq__('0:0:0:0:0:0:0:0') | self.__eq__(':::::::'):
+            if anonymize:
+                return "Invalid address"
             return False
-        if match:
-            return True
-        return False
+        elif anonymize:
+            if count == 0 and count0 == 0:
+                return "Invalid address"
+            if '[iPv6 address]' in ipv6 or ' [iPv6 address]' in ipv6 or '[iPv6 address] ' in ipv6 or ' [iPv6 address] '\
+                    in ipv6:
+                return ipv6
+            else:
+                count = 0
+                count0 = 0
+                return "Invalid address"
+        return bool(count + count0)
+
 
     def has_name(self, anonymize=False):
         # match the user's name
