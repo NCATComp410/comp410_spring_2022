@@ -8,7 +8,7 @@ class Pii(str):
     # https://regex101.com
     # https://www.w3schools.com/python/python_regex.asp
     def has_us_phone(self):
-        # Match a US phone number ddd-ddd-dddd ie 123-456-7890
+        # Match a US phone number ddd-ddd-dddd ie 123-456-7890s
         match = re.search(r'\d{3}-\d{3}-\d{4}', self)
         if match:
             return True
@@ -38,9 +38,18 @@ class Pii(str):
         if match:
             return True
         return False
+    
+    def has_street_address(self, anonymize = False):
+		match = re.sub(r'^[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
+		if match:
+			return True
 
-    def has_street_address(self):
-        return None
+        if anonymize:
+            return match
+        else:
+            if '[street address]' in match:
+                return True
+	    return False
 
     def has_credit_card(self):
         # Match a credit card number dddd-dddd-dddd-dddd
