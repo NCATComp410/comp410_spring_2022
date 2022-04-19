@@ -176,38 +176,66 @@ class DataTestCases(unittest.TestCase):
     def test_has_ipv6(self):
         test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test a valid address
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         '[iPv6 address]')
+
+        test_data = Pii('My IP address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334')
+        self.assertTrue(test_data.has_ipv6())  # test a valid address with string
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         'My IP address is [iPv6 address]')
+
         test_data = Pii(':0db8:85a3:0000:0000:8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test another valid address with empty first 16 bytes
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         '[iPv6 address]')
+
         test_data = Pii(':0db8::0000::8a2e:0370:7334')
         self.assertTrue(test_data.has_ipv6())  # test another valid address with multiple emtpy 16 byte chunks
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         '[iPv6 address]')
+
         test_data = Pii(':::::::')
         self.assertFalse(test_data.has_ipv6())  # test a preserved address
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         'Invalid address')
+
         test_data = Pii('0:0:0:0:0:0:0:0')
         self.assertFalse(test_data.has_ipv6())  # test a preserved address
-        test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334:')
-        self.assertFalse(test_data.has_ipv6())  # test an invalid address with extra colon
-        test_data = Pii('2001:0db8:85a3:0000:0000:8a2e')
-        self.assertFalse(test_data.has_ipv6())  # test an invalid incomplete address
-        test_data = Pii(':2001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # extra colon at beginning of invalid address
-        test_data = Pii('G001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # invalid characters in invalid address ('G' in first set of bytes)
-        test_data = Pii('02001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # extra digit on first 16 bytes
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         'Invalid address')
+
         test_data = Pii('2001.0db8.85a3.0000.0000.8a2e.0370.7334')
         self.assertFalse(test_data.has_ipv6())  # incorrect delimiter
-        test_data = Pii('$001:0db8:85a3:0000:0000:8a2e:0370:7334')
-        self.assertFalse(test_data.has_ipv6())  # invalid character ($) in first set of bytes
+        # Test anonymize
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         'Invalid address')
+
 
     def test_has_name(self):
         # test a valid name
         test_data = Pii('John Doe')
         self.assertEqual(test_data.has_name(), True)
 
+    def test_has_name_anonymize(self):
+        # test a valid name
+        test_data = Pii('John Doe')
+        self.assertEqual(test_data.has_name(anonymize=True), '[name]')
+
     def test_has_street_address(self):
         # test a valid street address
         test_data = Pii('1234 Nowhere Street')
         self.assertEqual(test_data.has_street_address(), True)
+
+    def test_has_street_address_anonymize(self):
+        # test a valid street address
+        test_data = Pii('1234 Nowhere Street')
+        self.assertEqual(test_data.has_street_address(anonymize=True), '[street address]')
 
     def test_has_credit_card(self):
         # Test case for a valid credit card
@@ -273,6 +301,11 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ssn())
         test_data = Pii('123,45,6789')
         self.assertFalse(test_data.has_ssn())
+
+    def test_has_ssn_anonymize(self):
+        test_data = Pii('My ssn is 123-45-6789')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My ssn is [ssn number]')
+
 
     def test_has_pii(self):
         test_data = Pii()
