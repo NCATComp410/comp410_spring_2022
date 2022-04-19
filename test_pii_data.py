@@ -6,7 +6,7 @@ from pii_data import Pii
 class DataTestCases(unittest.TestCase):
     def test_read_data(self):
         expected_data = ['Aggie Pride Worldwide',
-                         'Aggies Do', 
+                         'Aggies Do',
                          'Go Aggies',
                          'Aggie Strong!',
                          'Go Aggies',
@@ -140,16 +140,16 @@ class DataTestCases(unittest.TestCase):
         # invalid - separated by commas not colons
         test_data = Pii('2001,0db8,0001,0000,0000,0ab9,C0A8,0102')
         self.assertFalse(test_data.has_ipv6())
-        
+
     def test_has_ipv6_anonymize(self):
         self.assertEqual(Pii('My ip address is 2001:0db8:85a3:0000:0000:8a2e:0370:7334').has_ipv6(anonymize=True),
                          'My ip address is [ipv6]')
 
     def test_anonymize_name(self):
-        self.assertEqual(Pii('My name is Robert Hewey and I live on 123 Nocho Street').has_name(anonymize=True), 'My name is [name] and I live on 123 Nocho Street') 
-        self.assertEqual(Pii('Sean Tidale').has_name(anonymize=True), '[name]') 
-        self.assertEqual(Pii('789 Bob Rd is where Jack Howard lives notoriously').has_name(anonymize=True), '789 Bob Rd is where [name] lives notoriously') 
-        self.assertEqual(Pii('Jack Howard knows Hewbert Francis.').has_name(anonymize=True), '[name] knows [name].') 
+        self.assertEqual(Pii('My name is Robert Hewey and I live on 123 Nocho Street').has_name(anonymize=True), 'My name is [name] and I live on 123 Nocho Street')
+        self.assertEqual(Pii('Sean Tidale').has_name(anonymize=True), '[name]')
+        self.assertEqual(Pii('789 Bob Rd is where Jack Howard lives notoriously').has_name(anonymize=True), '789 Bob Rd is where [name] lives notoriously')
+        self.assertEqual(Pii('Jack Howard knows Hewbert Francis.').has_name(anonymize=True), '[name] knows [name].')
 
     def test_has_name(self):
         #Test case for valid name
@@ -180,13 +180,17 @@ class DataTestCases(unittest.TestCase):
 
         test_data = Pii(' 12356 Michellen Rd')
         self.assertEqual(test_data.has_street_address(), False)
-         
+
         test_data = Pii(' 123 pope Blvd')
         self.assertEqual(test_data.has_street_address(), False)
 
         test_data = Pii(' 123 Rich Blvd')
         self.assertEqual(test_data.has_street_address(), True)
-        
+
+    def test_has_credit_card_anonymize(self):
+        self.assertEqual(Pii('My credit card number is 9702-5552-1212-1234').has_credit_card(anonymize=True),
+                         'My credit card number is [credit card]')
+
     def test_has_credit_card(self):
         test_data = Pii('My card is 1234-1234-1234-1234')
         self.assertTrue(test_data.has_credit_card())
