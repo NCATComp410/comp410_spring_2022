@@ -212,27 +212,45 @@ class DataTestCases(unittest.TestCase):
     def test_has_credit_card(self):
         # Test case for a valid credit card
         test_data = Pii('My credit card number is 1234-5678-1234-5678')
-        self.assertEqual(test_data.has_credit_card(), True)
+        self.assertTrue(test_data.has_credit_card())
+        # Test anonymize
+        self.assertEqual(Pii('My credit card number is 1234-5678-1234-5678').has_credit_card(anonymize=True),
+                             'My credit card number is [credit card]')
 
         # Test case for a invalid credit card with letter
         test_data = Pii('My credit card number is 12k4-5678-1234-5678')
-        self.assertEqual(test_data.has_credit_card(), False)
+        self.assertFalse(test_data.has_credit_card())
+        # Test anonymize
+        self.assertEqual(Pii('My credit card number is 12k4-5678-1234-5678').has_credit_card(anonymize=True),
+                         'My credit card number is 12k4-5678-1234-5678')
 
         # Test case for a invalid credit card with incorrect delimiters
         test_data = Pii('My credit card number is 1234.5678.1234.5678')
-        self.assertEqual(test_data.has_credit_card(), False)
+        self.assertFalse(test_data.has_credit_card())
+        # Test anonymize
+        self.assertEqual(Pii('My credit card number is 1234.5678.1234.5678').has_credit_card(anonymize=True),
+                         'My credit card number is 1234.5678.1234.5678')
 
         # Test case for a invalid credit card with less numbers
         test_data = Pii('My credit card number is 1234-5678-1234-678')
-        self.assertEqual(test_data.has_credit_card(), False)
+        self.assertFalse(test_data.has_credit_card())
+        # Test anonymize
+         self.assertEqual(Pii('My credit card number is 1234-5678-1234-678').has_credit_card(anonymize=True),
+                         'My credit card number is 1234-5678-1234-678')
 
         # Test case for a invalid credit card with too many numbers
         test_data = Pii('My credit card number is 1234-56789-23456-789')
-        self.assertEqual(test_data.has_credit_card(), False)
+        self.assertFalse(test_data.has_credit_card())
+        # Test anonymize
+         self.assertEqual(Pii('My credit card number is 1234-56789-23456-789').has_credit_card(anonymize=True),
+                         'My credit card number is 1234-56789-23456-789')
 
         # Test case for invalid credit card with no '-'
         test_data = Pii('My credit card number is 1234567812345678')
-        self.assertEqual(test_data.has_credit_card(), False)
+        self.assertFalse(test_data.has_credit_card())
+        # Test anonymize
+        self.assertEqual(Pii('My credit card number is 1234567812345678').has_credit_card(anonymize=True,
+                        'My credit card number is 1234567812345678')
 
     def test_has_at_handle(self):
         # Test case for @ handle at the start of a word/phrase

@@ -83,10 +83,12 @@ class Pii(str):
             return True
         return False
 
-    def has_credit_card(self):
+    def has_credit_card(self, anonymize=False):
         # match a standard credit card number
-        match = re.search(r'\d{4}-\d{4}-\d{4}-\d{4}', self)
-        if match:
+        valid_cc = re.sub(r'\d{4}-\d{4}-\d{4}-\d{4}', '[credit card]', self)
+        if anonymize:
+            return valid_cc
+        if '[credit card]' in valid_cc:
             return True
         return False
 
