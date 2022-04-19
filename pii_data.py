@@ -8,7 +8,7 @@ class Pii(str):
     # https://regex101.com
     # https://www.w3schools.com/python/python_regex.asp
     def has_us_phone(self):
-        # Match a US phone number ddd-ddd-dddd ie 123-456-7890s
+        # Match a US phone number ddd-ddd-dddd ie 123-456-7890
         match = re.search(r'\d{3}-\d{3}-\d{4}', self)
         if match:
             return True
