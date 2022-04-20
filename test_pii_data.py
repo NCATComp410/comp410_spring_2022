@@ -156,11 +156,11 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_ssn_anonymize(self):
         test_data = Pii('My social security is 123-45-5667')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [ssn number]')
         test_data = Pii('My social security is 654-45-3456')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [ssn number]')
         test_data = Pii('My social security is 098-67-9878')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [ssn number]')
 
         test_data = Pii('My social security is 098.67.9878')
         self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is 098.67.9878')
