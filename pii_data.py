@@ -43,7 +43,7 @@ class Pii(str):
         if self.__eq__('0:0:0:0:0:0:0:0'):
             return False
         elif match:
-            return True 
+            return True
         return False
 
     def has_name(self, anonymize = False):
@@ -56,10 +56,14 @@ class Pii(str):
                 return True
         return False
 
-    def has_street_address(self):
-        match = re.search(r'^[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', self)
-        if match:
-            return True
+    def has_street_address(self, anonymize = False):
+        match = re.sub(r'^[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
+
+        if anonymize:
+            return match
+        else:
+            if '[street address]' in match:
+                return True
         return False
 
     def has_credit_card(self):
@@ -74,7 +78,7 @@ class Pii(str):
         if match:
             return True
         return None
-    
+
     def has_ssn(self):
         match = re.search(r'^(?!000|.+0{4})(?:\d{9}|\d{3}-\d{2}-\d{4})$', self)
         if match:
