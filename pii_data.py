@@ -34,17 +34,16 @@ class Pii(str):
                 return True
         return False
 
-    def has_ipv6(self):
+    def has_ipv6(self, anonymize = False):
         # Match a IPv6 address
-        match = re.search(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+        match = re.sub(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
                            r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
                            r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', self)
-        if self.__eq__('0:0:0:0:0:0:0:0'):
-            return False
-        elif match:
-            return True
-        return False
+                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', '[IPv6 address]', self)
+        if anonymize:
+            return match
+        else:
+            return True if match != self else None
 
     def has_name(self, anonymize = False):
         # Match a name that is capitalized
