@@ -38,18 +38,16 @@ class Pii(str):
         if match:
             return True
         return False
-    
+
     def has_street_address(self, anonymize = False):
-		match = re.sub(r'^[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
-		if match:
-			return True
+        match = re.sub(r'^[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
 
         if anonymize:
             return match
         else:
             if '[street address]' in match:
                 return True
-	    return False
+        return False
 
     def has_credit_card(self):
         # Match a credit card number dddd-dddd-dddd-dddd

@@ -101,13 +101,13 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_name())
         
     def test_has_street_address(self):
-		# test case valid
+        # test case valid
         test_data = Pii('12345 Home St')
         self.assertEqual(test_data.has_street_address(), True)
-		# test case invalid
-		test_data = Pii('1234567 Green Rd')
+        # test case invalid
+        test_data = Pii('1234567 Green Rd')
         self.assertEqual(test_data.has_street_address(), False)
-		# test case invalid
+        # test case invalid
 
     def test_has_credit_card(self):
         # Test a valid credit card number
@@ -142,7 +142,7 @@ class DataTestCases(unittest.TestCase):
 
         # test case invalid
         test_data = Pii('1234567 Green Rd')
-        self.assertEqual(test_data.has_street_addresss(anonymize = True), 'invalid street address')
+        self.assertEqual(test_data.has_street_address(anonymize = True), '1234567 Green Rd')
 
 
 if __name__ == '__main__':
