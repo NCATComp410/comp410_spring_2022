@@ -77,12 +77,13 @@ class Pii(str):
         if match:
             return True
         return None
-
-    def has_ssn(self):
-        match = re.search(r'^(?!000|.+0{4})(?:\d{9}|\d{3}-\d{2}-\d{4})$', self)
-        if match:
-            return True
-        return False
+    
+    def has_ssn(self, anonymize= False):
+        newstr = re.sub(r'\d{3}-\d{2}-\d{4}','[ssn number]', self)
+        if anonymize:
+            return newstr
+        else:
+            return True if newstr != self else None
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \

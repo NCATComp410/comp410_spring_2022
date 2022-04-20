@@ -149,6 +149,36 @@ class DataTestCases(unittest.TestCase):
         # Test an invalid at handle
         test_data = Pii('My handle is @john$!')
         self.assertFalse(test_data.has_at_handle())
+    
+    def test_has_ssn(self):
+        test_data = Pii('My social security is 123-45-5667')
+        self.assertTrue(test_data.has_ssn())
+        test_data = Pii('My social security is 654-45-3456')
+        self.assertTrue(test_data.has_ssn())
+        test_data = Pii('My social security is 098-67-9878')
+        self.assertTrue(test_data.has_ssn())
+
+        test_data = Pii('My social security is 098.67.9878')
+        self.assertFalse(test_data.has_ssn())
+        test_data = Pii('My social security is 098679878')
+        self.assertFalse(test_data.has_ssn())
+        test_data = Pii('My social security is 098-6-9878')
+        self.assertFalse(test_data.has_ssn())
+
+    def test_has_ssn_anonymize(self):
+        test_data = Pii('My social security is 123-45-5667')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [ssn number]')
+        test_data = Pii('My social security is 654-45-3456')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [ssn number]')
+        test_data = Pii('My social security is 098-67-9878')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [ssn number]')
+
+        test_data = Pii('My social security is 098.67.9878')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is 098.67.9878')
+        test_data = Pii('My social security is 098679878')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is 098679878')
+        test_data = Pii('My social security is 098-6-9878')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is 098-6-9878')
 
     def test_has_pii(self):
         test_data = Pii()
