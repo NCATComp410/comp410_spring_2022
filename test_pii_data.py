@@ -92,7 +92,7 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_ipv6())
         # test invalid test cases
         test_data = Pii('2001:0db8:85a3:0000:')
-        self.assertFalse(test_data.has_ipv6()) 
+        self.assertFalse(test_data.has_ipv6())
 
 
     def test_has_name(self):
@@ -115,6 +115,7 @@ class DataTestCases(unittest.TestCase):
         # test case invalid
         test_data = Pii('1234567 Green Rd')
         self.assertEqual(test_data.has_street_address(), False)
+        # test case invalid
 
     def test_has_credit_card(self):
         # Test a valid credit card number
@@ -171,6 +172,15 @@ class DataTestCases(unittest.TestCase):
     def test_has_pii(self):
         test_data = Pii()
         self.assertFalse(test_data.has_pii())
+
+    def test_has_street_address_anonymize(self):
+        # test case valid
+        test_data = Pii('12345 Home St')
+        self.assertEqual(test_data.has_street_address(anonymize = True), '[street address]')
+
+        # test case invalid
+        test_data = Pii('1234567 Green Rd')
+        self.assertEqual(test_data.has_street_address(anonymize = True), '1234567 Green Rd')
 
 
 if __name__ == '__main__':
