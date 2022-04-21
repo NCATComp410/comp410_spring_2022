@@ -106,6 +106,18 @@ class Pii(str):
                self.has_street_address() or self.has_credit_card() or self.has_at_handle()
 
 
+def anonymize(string: str) -> str:
+    result = Pii(string).has_us_phone(anonymize=True)
+    result = Pii(result).has_email(anonymize=True)
+    result = Pii(result).has_ipv4(anonymize=True)
+    result = Pii(result).has_ipv6(anonymize=True)
+    result = Pii(result).has_street_address(anonymize=True)
+    result = Pii(result).has_name(anonymize=True)
+    result = Pii(result).has_credit_card(anonymize=True)
+    result = Pii(result).has_at_handle(anonymize=True)
+    return result
+
+
 # Read data from source file secured with an api key and return a list of lines
 def read_data() -> list:
     # Load the API_KEY from .env file
@@ -140,7 +152,7 @@ if __name__ == '__main__':
 
     # anonymize the data
     for i in range(len(data)):
-        data[i] = Pii(data[i]).anonymize()
+        data[i] = anonymize(data[i])
 
     # write results to a file
     write_data('case_logs_anonymized.csv', data)
