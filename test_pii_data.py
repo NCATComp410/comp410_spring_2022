@@ -1,42 +1,28 @@
 import unittest
-from pii_data import read_data
+from pii_data import read_data, write_data
 from pii_data import Pii
+import os
 
 
 class DataTestCases(unittest.TestCase):
-    def test_read_data(self):
-        expected_data = ['Aggie Pride Worldwide',
-                         'Aggies Do', 
-                         'Go Aggies',
-                         'Aggie Strong!',
-                         'Go Aggies',
-                         'And Thats on 1891',
-                         "Let's Go Aggies",
-                         'Never Ever Underestimate an Aggie',
-                         'Every Day The Aggie Way',
-                         'Can I get an Aggie Pride',
-                         'Aggies Do ^2',
-                         'Aggie Pride For The Culture',
-                         'We Are Aggies! We Are Proud!',
-                         'Set My Future Self Up for Success!',
-                         'AGGIE PRIDE!',
-                         'We are Aggies',
-                         'A-G-G-I-E, WHAT? P-R-I-D-E',
-                         'Aggie Pride',
-                         'Leaders Can Aggies Do',
-                         'Mens et Manus',
-                         'Aggies Aggies Aggies',
-                         'Aggie Pride',
-                         'Aggies are always number 1!',
-                         'Because thats what Aggies do',
-                         'Aggie Bred',
-                         'Move forward with purpose',
-                         'GO Aggie!',
-                         'Aggie Pride']
+    def test_write_data(self):
+        # Create some expected data to write
+        expected = ['this', 'is', 'some', 'test', 'data']
+        # Write the data
+        count = write_data('test_write_data.txt', expected)
 
-        data = read_data('sample_data.txt')
+        # Check to make sure the count was correct
+        self.assertEqual(count, len(expected))
 
-        self.assertEqual(data, expected_data)
+        # Check to make sure the data was written correctly
+        actual = []
+        with open('test_write_data.txt') as f:
+            for line in f.readlines():
+                actual.append(line.rstrip())
+        self.assertEqual(expected, actual)
+
+        # clean-up the test file
+        os.remove('test_write_data.txt')
 
     def test_has_us_phone(self):
         # Test a valid US phone number
