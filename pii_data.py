@@ -1,4 +1,5 @@
 import re
+import requests
 
 
 # PII = Personally Identifiable Information
@@ -105,29 +106,41 @@ class Pii(str):
                self.has_street_address() or self.has_credit_card() or self.has_at_handle()
 
 
-def read_data(filename: str):
-    data = []
-    with open(filename) as f:
-        # Read one line from the file stripping off the \n
-        for line in f:
-            data.append(line.rstrip())
-    return data
+# Read data from source file secured with an api key and return a list of lines
+def read_data() -> list:
+    # Load the API_KEY from .env file
+    # https://www.datascienceexamples.com/env-file-for-passwords-and-keys/
+    with open('.env') as f:
+        for line in f.readlines():
+            m = re.search(r'API_KEY="(\w+-\w+)"', line)
+            if m:
+                api_key = m.group(1)
+
+    # Construct the URL from the API key
+    url = requests.get('https://drive.google.com/uc?export=download&id=' + api_key)
+
+    # Return the data as a list of lines
+    return url.text.split('\n')
+
+
+# Writes a list of strings to a local file
+# Returns the number of lines that were written
+def write_data(filename: str, str_list: list) -> int:
+    line_count = 0
+    with open(filename, 'w') as f:
+        for s in str_list:
+            f.write(s+'\n')
+            line_count += 1
+    return line_count
 
 
 if __name__ == '__main__':
-    data = read_data('sample_data.txt')
-    print(data)
-    print('---')
-    #debug phone number anon
-    pii_data = Pii('My phone number is 123-123-1234')
-    print(pii_data.has_us_phone(True))
-    
+    # read the data from the case logs
+    data = read_data()
 
+    # anonymize the data
+    for i in range(len(data)):
+        data[i] = Pii(data[i]).anonymize()
 
-    pii_data = Pii('My phone number is 123-123-1234')
-    print(pii_data)
-
-    if pii_data.has_pii():
-        print('There is PII data preset')
-    else:
-        print('No PII data detected')
+    # write results to a file
+    write_data('case_logs_anonymized.csv', data)
