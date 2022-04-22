@@ -11,7 +11,7 @@ class Pii(str):
     def has_us_phone(self, anonymize=False):
         # Match a US phone number ddd-ddd-dddd ie 123-456-7890
         newstr = re.sub(
-            r'(\d{3}(-|.)\d{3}(-|.)\d{4})|\d{10}', '[phone number]', self)
+            r'(\d{3}[.-]\d{3}[.-]\d{4})|\d{10}', '[phone number]', self)
         if anonymize:
             return newstr
         else:
@@ -30,10 +30,10 @@ class Pii(str):
 
     def has_ipv4(self, anonymize = False):
         # the 4 values in the IP address are from 0-255 for each segment each line is 1 segment
-        match = re.sub(r'^\b([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
+        match = re.sub(r'\b([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
                           r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
                           r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
-                          r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b$', '[ipv4]', self)
+                          r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b', '[ipv4]', self)
         if anonymize:
             return match
         else:
@@ -42,10 +42,10 @@ class Pii(str):
     def has_ipv6(self, anonymize = False):
         # There are 8 avaliable chunks to place IP data also allowing for no data to be input. Covers 0-9,a-f, and A-F
 
-        match = re.sub(r'(^(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
+        match = re.sub(r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
                           r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
                           r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
-                          r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?$)', '[ipv6]', self)
+                          r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?', '[ipv6]', self)
         if anonymize:
             return match
         else:
@@ -91,8 +91,18 @@ class Pii(str):
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn()
 
-    def anonymize(self):
-        return self.has_us_phone(anonymize=True)
+
+def anonymize(string: str) -> str:
+    result = Pii(string).has_us_phone(anonymize=True)
+    result = Pii(result).has_email(anonymize=True)
+    result = Pii(result).has_ipv4(anonymize=True)
+    result = Pii(result).has_ipv6(anonymize=True)
+    result = Pii(result).has_street_address(anonymize=True)
+    result = Pii(result).has_credit_card(anonymize=True)
+    result = Pii(result).has_name(anonymize=True)
+    result = Pii(result).has_at_handle(anonymize=True)
+    result = Pii(result).has_ssn(anonymize=True)
+    return result
 
 
 # Read data from source file secured with an api key and return a list of lines
@@ -129,7 +139,7 @@ if __name__ == '__main__':
 
     # anonymize the data
     for i in range(len(data)):
-        data[i] = Pii(data[i]).anonymize()
+        data[i] = anonymize(data[i])
 
     # write results to a file
     write_data('case_logs_anonymized.csv', data)
