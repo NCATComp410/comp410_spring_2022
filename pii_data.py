@@ -41,10 +41,10 @@ class Pii(str):
             return True if match != self else None
 
     def has_ipv6(self, anonymize=False):
-        newstr, count1 = re.subn(r'((\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+        newstr, count1 = re.subn(r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
                                  r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
                                  r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                                 r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', '[ipv6]', self)
+                                 r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?(?=[ .]|$)', '[ipv6]', self)
 
         if anonymize:
             return newstr
@@ -61,7 +61,7 @@ class Pii(str):
             return bool(count1)
 
     def has_street_address(self, anonymize=False):
-        newstr, count1 = re.subn(r'(?<=\s)\d{0,4}\s[A-Z][a-zA-Z]{2,30}\s\b(Ave|St|Blvd|Rd)\b', '[street address]', self)
+        newstr, count1 = re.subn(r'(?<=\s)\d{0,4}\s[A-Z][a-z]{2,30}\s[A-Z][a-z]+', '[street address]', self)
         print(newstr)
         print(bool(count1))
 
@@ -89,7 +89,7 @@ class Pii(str):
         #r'^[\w@](?!.*?\.{2})[\w.]{1,28}[\w]$'
 
         #hand = re.sub(r'[\@][A-z0-9][A-z0-9.]{0,15}', '[at handle]', self)
-        hand = re.sub(r'^[\w@](?!.*?\.{2})[\w.]{1,28}[\w]$', '[at handle]', self)
+        hand = re.sub(r'(^|(?<=\s))@\w+(?=[ .]|$)', '[at handle]', self)
 
         if anonymize:
             return hand
