@@ -140,3 +140,7 @@ dmypy.json
 # vs
 .vs/
 TestResults/
+
+# Case logs
+# Don't add the case logs to version control
+case_logs_anonymized.csv

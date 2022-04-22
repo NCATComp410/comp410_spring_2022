@@ -1,39 +1,28 @@
 import unittest
-from pii_data import read_data
+from pii_data import read_data, write_data
 from pii_data import Pii
+import os
 
 
 class DataTestCases(unittest.TestCase):
-    def test_read_data(self):
-        expected_data = ['Aggie Pride Worldwide',
-                         'Aggies Do',
-                         'Go Aggies',
-                         'Aggie Strong!',
-                         'Go Aggies',
-                         'And Thats on 1891',
-                         "Let's Go Aggies",
-                         'Never Ever Underestimate an Aggie',
-                         'Every Day The Aggie Way',
-                         'Can I get an Aggie Pride',
-                         'Aggies Do ^2',
-                         'Aggie Pride For The Culture',
-                         'We Are Aggies! We Are Proud!',
-                         'Set My Future Self Up for Success!',
-                         'AGGIE PRIDE!',
-                         'We are Aggies',
-                         'A-G-G-I-E, WHAT? P-R-I-D-E',
-                         'Aggie Pride',
-                         'Leaders Can Aggies Do',
-                         'Mens et Manus',
-                         'Aggies Aggies Aggies',
-                         'Aggie Pride',
-                         'Aggies are always number 1!',
-                         'Because thats what Aggies do',
-                         'Aggie Bred']
+    def test_write_data(self):
+        # Create some expected data to write
+        expected = ['this', 'is', 'some', 'test', 'data']
+        # Write the data
+        count = write_data('test_write_data.txt', expected)
 
-        data = read_data('sample_data.txt')
+        # Check to make sure the count was correct
+        self.assertEqual(count, len(expected))
 
-        self.assertEqual(data, expected_data)
+        # Check to make sure the data was written correctly
+        actual = []
+        with open('test_write_data.txt') as f:
+            for line in f.readlines():
+                actual.append(line.rstrip())
+        self.assertEqual(expected, actual)
+
+        # clean-up the test file
+        os.remove('test_write_data.txt')
 
     def test_has_email(self):
         test_data = Pii('My email is kaylahen2019@gmail.com')
@@ -58,7 +47,7 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(Pii('My email is kaylahen2019@gmail.com').has_email(anonymize=True), 'My email is [email]')
 
         self.assertEqual(Pii('My email is martin.complex@gmail.com').has_email(anonymize=True), 'My email is [email]')
-        
+
         self.assertEqual(Pii('My email is engineering1gmail.com').has_email(anonymize=True),
                          'My email is engineering1gmail.com')
 
@@ -129,17 +118,17 @@ class DataTestCases(unittest.TestCase):
     def test_has_ipv6(self):
         # test a valid address
         test_data = Pii('0045:Fa34:53d9:4d53:0020:0000:6491:8485')
-        self.assertTrue(test_data.has_ipv6())  
+        self.assertTrue(test_data.has_ipv6())
 
         test_data = Pii('0000::5248:ee43::8789:1234:1200')
-        self.assertTrue(test_data.has_ipv6())  
+        self.assertTrue(test_data.has_ipv6())
 
         # test an invalid address with to many digits in segment
         test_data = Pii('00000:::::')
-        self.assertFalse(test_data.has_ipv6())        
-        
+        self.assertFalse(test_data.has_ipv6())
+
         # test an invalid address w letter outside of bounds
-        self.assertFalse(test_data.has_ipv6())  
+        self.assertFalse(test_data.has_ipv6())
         test_data = Pii('r445:rtyu:vd45:nmkl:af24:kb78')
 
     def test_has_ipv6a(self):
@@ -153,7 +142,7 @@ class DataTestCases(unittest.TestCase):
         # test an invalid address with to many digits in segment
         test_data = Pii('00000:::::')
         self.assertEqual(test_data.has_ipv6(anonymize=True), '00000:::::')
-        
+
         # test an invalid address w letter outside of bounds
         test_data = Pii('r445:rtyu:vd45:nmkl:af24:kb78')
         self.assertEqual(test_data.has_ipv6(anonymize=True), 'r445:rtyu:vd45:nmkl:af24:kb78')
@@ -237,7 +226,7 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_at_handle(), True)
         test_data = Pii('My social media is tonicarr')
         self.assertEqual(test_data.has_at_handle(), None)
-    
+
     def test_has_at_handle_anonymize(self):
         test_data = Pii('My social media is handle @tonicarr')
         self.assertEqual(test_data.has_at_handle(anonymize=True), 'My social media is handle[at handle]')
@@ -281,4 +270,3 @@ class DataTestCases(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
- 
