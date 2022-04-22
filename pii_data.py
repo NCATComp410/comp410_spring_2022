@@ -37,10 +37,10 @@ class Pii(str):
 
     def has_ipv6(self, anonymize = False):
         # Match a IPv6 address
-        match = re.sub(r'(^(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
-                           r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?$)', '[IPv6 address]', self)
+        match = re.sub(r'(^|(?<=\s))(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                       r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                       r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?:'
+                       r'(\b[0-9a-fA-F]{0,4}\b)?:(\b[0-9a-fA-F]{0,4}\b)?(?=[ .]|$)', '[IPv6 address]', self)
         if anonymize:
             return match
         else:
@@ -57,7 +57,7 @@ class Pii(str):
         return False
 
     def has_street_address(self, anonymize = False):
-        match = re.sub(r'^[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
+        match = re.sub(r'\b[0-9]{1,5}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
 
         if anonymize:
             return match
@@ -74,7 +74,7 @@ class Pii(str):
         return None
 
     def has_at_handle(self):
-        match = re.search(r'[@][A-Za-z0-9_]+$', self)
+        match = re.search(r'@\w+(?=[ .]|$)', self)
         if match:
             return True
         return None
