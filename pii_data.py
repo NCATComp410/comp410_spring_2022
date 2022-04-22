@@ -41,23 +41,15 @@ class Pii(str):
         # 1[0-9][0-9]:  match numbers 100 - 199
         # 2[0-4][0-9]:  match numbers 200 - 249
         # 25[0-5]:      match numbers 250 - 255
-        ipv4, count1 = re.subn(r'^\d{4}(\d{12})?$', '[iPv4 address]', self)
+        # ipv4, count1 = re.subn(r'\d{4}(\d{12})?', '[iPv4 address]', self)
 
-        ipv4, count2 = re.subn(r'\b(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.)'
-                               r'{3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)'
-                               r'([^.^[0-9])*\b', '[iPv4 address]', ipv4)
-
-
-        # 255.255.255.255 is already preserved for broadcasting and would be valid
-        if self.__eq__('255.255.255.255') or self.__eq__('0.0.0.0'):
-            if anonymize:
-                return self
-            return False
-        elif anonymize:
-            if count1 == 0 and count2 == 0:
-                return self
-            return ipv4
-        return bool(count2 + count1)
+        match = re.sub(r'(^|(?<=\s))(?:\d{1,3}\.){3}\d{1,3}', "[iPv4 address]", self)
+        if anonymize:
+            return match
+        else:
+            if match != self:
+                return True
+        return False
 
     def has_ipv6(self, anonymize=False):
 
@@ -68,11 +60,11 @@ class Pii(str):
                                '[iPv6 address]', ipv6)
         if self.__eq__('0:0:0:0:0:0:0:0') | self.__eq__(':::::::'):
             if anonymize:
-                return "Invalid address"
+                return self
             return False
         elif anonymize:
             if count == 0 and count0 == 0:
-                return "Invalid address"
+                return self
             if '[iPv6 address]' in ipv6 or ' [iPv6 address]' in ipv6 or '[iPv6 address] ' in ipv6 or ' [iPv6 address] '\
                     in ipv6:
                 return ipv6
@@ -85,7 +77,7 @@ class Pii(str):
 
     def has_name(self, anonymize=False):
         # match the user's name
-        match = re.sub(r'^[A-Z][a-z]+\s[A-Z][a-z]+', '[name]', self)
+        match = re.sub(r'[A-Z][a-z]+\s[A-Z][a-z]+', '[name]', self)
         if anonymize:
             return match
         else:
@@ -95,7 +87,7 @@ class Pii(str):
 
     def has_street_address(self, anonymize=False):
         # match the user's address
-        match = re.sub(r'^[0-9]{3,4}\s[a-zA-Z]{2,}\s[a-zA-Z]{2,}', '[street address]', self)
+        match = re.sub(r'\d{2,4}\s[A-Z][a-z]{2,}\s[A-Z][a-z]{2,}', '[street address]', self)
         if anonymize:
             return match
         else:
@@ -129,8 +121,18 @@ class Pii(str):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
                self.has_street_address() or self.has_credit_card() or self.has_at_handle()
 
-    def anonymize(self):
-        return self.has_us_phone(anonymize=True)
+
+def anonymize(string: str) -> str:
+    result = Pii(string).has_us_phone(anonymize=True)
+    result = Pii(result).has_email(anonymize=True)
+    result = Pii(result).has_ipv4(anonymize=True)
+    result = Pii(result).has_ipv6(anonymize=True)
+    result = Pii(result).has_street_address(anonymize=True)
+    result = Pii(result).has_credit_card(anonymize=True)
+    result = Pii(result).has_name(anonymize=True)
+    # result = Pii(result).has_at_handle(anonymize=True)
+    result = Pii(result).has_ssn(anonymize=True)
+    return result
 
 
 # Read data from source file secured with an api key and return a list of lines
@@ -167,7 +169,7 @@ if __name__ == '__main__':
 
     # anonymize the data
     for i in range(len(data)):
-        data[i] = Pii(data[i]).anonymize()
+        data[i] = anonymize(data[i])
 
     # write results to a file
     write_data('case_logs_anonymized.csv', data)
