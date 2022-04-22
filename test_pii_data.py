@@ -59,7 +59,7 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_ipv4_anonymize(self):
         test_data = Pii('This... 176.96.81.20 is my IP')
-        self.assertEqual(test_data.has_ipv4(anoymize=True), 'This... [IPv4 address] is my IP')
+        self.assertEqual(test_data.has_ipv4(anonymize=True), 'This... [IPv4 address] is my IP')
 
     def test_has_ipv6(self):
         test_data = Pii('2001:0db8:85a3:0000:0000:8a2e:0370:7334')

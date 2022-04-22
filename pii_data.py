@@ -8,7 +8,6 @@ class Pii(str):
     # For help with regex see
     # https://regex101.com
     # https://www.w3schools.com/python/python_regex.asp
-    def has_us_phone(self, anonymize= False):
     def has_us_phone(self, anonymize=False):
         # Match a US phone number ddd-ddd-dddd ie 123-456-7890
         match = re.sub(r'(\d{3}-\d{3}-\d{4})|(\d{10})', '[us phone]', self)
@@ -27,11 +26,11 @@ class Pii(str):
         else:
             return True if match != self else None
 
-    def has_ipv4(self, anoymize= False):
+    def has_ipv4(self, anonymize= False):
         # Match all forms of IPv4
         match = re.sub("(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[1-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])\.(25[0-5]|2[0-4][0-9]|1[0-9][0-9]|[1-9][0-9]|[0-9])","[IPv4 address]", self)
 
-        if anoymize:
+        if anonymize:
             return match
         else:
             return True if match != self else None
@@ -58,7 +57,7 @@ class Pii(str):
         return bool(c)
 
     def has_street_address(self, anonymize=False):
-        match = re.sub(r'\d{0,9}\s{1}\b([A-Z]{1}[a-z]+\s{1})([A-Z]{1}[a-z]+)\b','[street address]', self)
+        match = re.sub(r'\d{2,4}\s[A-Z][a-z]{2,}\s[A-Z][a-z]{2,}','[street address]', self)
         if anonymize:
             return match
         else:
@@ -97,8 +96,18 @@ class Pii(str):
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn()
 
-    def anonymize(self):
-        return self.has_us_phone(anonymize=True)
+
+def anonymize(string: str) -> str:
+    result = Pii(string).has_us_phone(anonymize=True)
+    result = Pii(result).has_email(anonymize=True)
+    result = Pii(result).has_ipv4(anonymize=True)
+    result = Pii(result).has_ipv6(anonymize=True)
+    result = Pii(result).has_street_address(anonymize=True)
+    result = Pii(result).has_credit_card(anonymize=True)
+    result = Pii(result).has_name(anonymize=True)
+    result = Pii(result).has_at_handle(anonymize=True)
+    result = Pii(result).has_ssn(anonymize=True)
+    return result
 
 
 # Read data from source file secured with an api key and return a list of lines
@@ -135,7 +144,7 @@ if __name__ == '__main__':
 
     # anonymize the data
     for i in range(len(data)):
-        data[i] = Pii(data[i]).anonymize()
+        data[i] = anonymize(data[i])
 
     # write results to a file
     write_data('case_logs_anonymized.csv', data)
