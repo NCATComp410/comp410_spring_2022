@@ -44,9 +44,11 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(Pii('My email is computerscience.com').has_email(anonymize=True),
                          'My email is computerscience.com')
 
-        self.assertEqual(Pii('My email is kaylahen2019@gmail.com').has_email(anonymize=True), 'My email is [email]')
+        self.assertEqual(Pii(
+            'My email is kaylahen2019@gmail.com').has_email(anonymize=True), 'My email is [email]')
 
-        self.assertEqual(Pii('My email is martin.complex@gmail.com').has_email(anonymize=True), 'My email is [email]')
+        self.assertEqual(Pii(
+            'My email is martin.complex@gmail.com').has_email(anonymize=True), 'My email is [email]')
 
         self.assertEqual(Pii('My email is engineering1gmail.com').has_email(anonymize=True),
                          'My email is engineering1gmail.com')
@@ -67,21 +69,49 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('My phone number is 970.555.1212')
         self.assertTrue(test_data.has_us_phone())
 
+    def test_has_account_number(self):
+        test_data = Pii('My account number is 14-243496')
+        self.assertTrue(test_data.has_account_number())
+        test_data = Pii('My account number is 14-435234')
+        self.assertTrue(test_data.has_account_number())
+        test_data = Pii('My account number is 14.243496')
+        self.assertIsNone(test_data.has_account_number())
+        test_data = Pii('My account number is 14-45234')
+        self.assertIsNone(test_data.has_account_number())
+
+    def test_has_account_number_anonymize(self):
+        test_data = Pii('My account number is 14-243496')
+        self.assertEqual(test_data.has_account_number(
+            anonymize=True), 'My account number is [account number]')
+        test_data = Pii('My account number is 14-435234')
+        self.assertEqual(test_data.has_account_number(
+            anonymize=True), 'My account number is [account number]')
+        test_data = Pii('My account number is 14.243496')
+        self.assertEqual(test_data.has_account_number(
+            anonymize=True), 'My account number is 14.243496')
+        test_data = Pii('My account number is 14-45234')
+        self.assertEqual(test_data.has_account_number(
+            anonymize=True), 'My account number is 14-45234')
+
     def test_has_us_phone_anonymize(self):
         # Test a valid US phone number
         test_data = Pii('My phone number is 970-555-1212')
-        self.assertEqual(test_data.has_us_phone(anonymize=True), 'My phone number is [phone number]')
+        self.assertEqual(test_data.has_us_phone(anonymize=True),
+                         'My phone number is [phone number]')
         # Test a valid US phone number
         test_data = Pii('My phone number is 9705551212')
-        self.assertEqual(test_data.has_us_phone(anonymize=True), 'My phone number is [phone number]')
+        self.assertEqual(test_data.has_us_phone(anonymize=True),
+                         'My phone number is [phone number]')
 
         # Test a partial US phone number
         test_data = Pii('My number is 555-1212')
-        self.assertEqual(test_data.has_us_phone(anonymize=True), 'My number is 555-1212')
+        self.assertEqual(test_data.has_us_phone(
+            anonymize=True), 'My number is 555-1212')
 
         # Updated to allow for this entry
         test_data = Pii('My phone number is 970.555.1212')
-        self.assertEqual(test_data.has_us_phone(anonymize=True), 'My phone number is [phone number]')
+        self.assertEqual(test_data.has_us_phone(anonymize=True),
+                         'My phone number is [phone number]')
 
     def test_has_ipv4(self):
         # Successful test cases
@@ -145,7 +175,8 @@ class DataTestCases(unittest.TestCase):
 
         # test an invalid address w letter outside of bounds
         test_data = Pii('r445:rtyu:vd45:nmkl:af24:kb78')
-        self.assertEqual(test_data.has_ipv6(anonymize=True), 'r445:rtyu:vd45:nmkl:af24:kb78')
+        self.assertEqual(test_data.has_ipv6(anonymize=True),
+                         'r445:rtyu:vd45:nmkl:af24:kb78')
 
     def test_has_name(self):
         test_data = Pii('My name is Alex Red')
@@ -159,7 +190,8 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_name_anonymize(self):
         test_data = Pii('My name is Alex Red')
-        self.assertEqual(test_data.has_name(anonymize=True), 'My name is [name]')
+        self.assertEqual(test_data.has_name(
+            anonymize=True), 'My name is [name]')
         test_data = Pii('William Dane')
         self.assertEqual(test_data.has_name(anonymize=True), '[name]')
         test_data = Pii('kate')
@@ -179,13 +211,17 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_street_address_anonymize(self):
         test_data = Pii('My house is at 123 Chesnut Steet')
-        self.assertEqual(test_data.has_street_address(anonymize=True), 'My house is at [street address]')
+        self.assertEqual(test_data.has_street_address(
+            anonymize=True), 'My house is at [street address]')
         test_data = Pii('1235 Willow Way')
-        self.assertEqual(test_data.has_street_address(anonymize=True), '[street address]')
+        self.assertEqual(test_data.has_street_address(
+            anonymize=True), '[street address]')
         test_data = Pii('Raden Lane')
-        self.assertEqual(test_data.has_street_address(anonymize=True), 'Raden Lane')
+        self.assertEqual(test_data.has_street_address(
+            anonymize=True), 'Raden Lane')
         test_data = Pii('1345 chesnut steet')
-        self.assertEqual(test_data.has_street_address(anonymize=True), '1345 chesnut steet')
+        self.assertEqual(test_data.has_street_address(
+            anonymize=True), '1345 chesnut steet')
 
     def test_has_credit_card(self):
         test_data = Pii('My credit card number is 1929-1228-3455-3454')
@@ -210,16 +246,20 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_credit_card_anonymize(self):
         test_data = Pii('My credit card number is 1929-1228-3455-3454')
-        self.assertEqual(test_data.has_credit_card(anonymize=True), 'My credit card number is [credit card number]')
+        self.assertEqual(test_data.has_credit_card(
+            anonymize=True), 'My credit card number is [credit card number]')
         test_data = Pii('My credit card number is 2345-4567-5678-6789')
-        self.assertEqual(test_data.has_credit_card(anonymize=True), 'My credit card number is [credit card number]')
+        self.assertEqual(test_data.has_credit_card(
+            anonymize=True), 'My credit card number is [credit card number]')
 
         # bad symbol
         test_data = Pii('My credit card number is 3456=1234=5678=6789')
-        self.assertEqual(test_data.has_credit_card(anonymize=True), 'My credit card number is 3456=1234=5678=6789')
+        self.assertEqual(test_data.has_credit_card(
+            anonymize=True), 'My credit card number is 3456=1234=5678=6789')
         # missing symbol
         test_data = Pii('My credit card number is 1234764598764567')
-        self.assertEqual(test_data.has_credit_card(anonymize=True), 'My credit card number is 1234764598764567')
+        self.assertEqual(test_data.has_credit_card(
+            anonymize=True), 'My credit card number is 1234764598764567')
 
     def test_has_at_handle(self):
         test_data = Pii('My social media is handle @tonicarr')
@@ -229,9 +269,11 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_at_handle_anonymize(self):
         test_data = Pii('My social media is handle @tonicarr')
-        self.assertEqual(test_data.has_at_handle(anonymize=True), 'My social media is handle[at handle]')
+        self.assertEqual(test_data.has_at_handle(anonymize=True),
+                         'My social media is handle[at handle]')
         test_data = Pii('My social media is tonicarr')
-        self.assertEqual(test_data.has_at_handle(anonymize=True), 'My social media is tonicarr')
+        self.assertEqual(test_data.has_at_handle(
+            anonymize=True), 'My social media is tonicarr')
 
     def test_has_ssn(self):
         test_data = Pii('My social security is 123-45-5667')
@@ -250,18 +292,24 @@ class DataTestCases(unittest.TestCase):
 
     def test_has_ssn_anonymize(self):
         test_data = Pii('My social security is 123-45-5667')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+        self.assertEqual(test_data.has_ssn(anonymize=True),
+                         'My social security is [social security number]')
         test_data = Pii('My social security is 654-45-3456')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+        self.assertEqual(test_data.has_ssn(anonymize=True),
+                         'My social security is [social security number]')
         test_data = Pii('My social security is 098-67-9878')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+        self.assertEqual(test_data.has_ssn(anonymize=True),
+                         'My social security is [social security number]')
 
         test_data = Pii('My social security is 098.67.9878')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is 098.67.9878')
+        self.assertEqual(test_data.has_ssn(anonymize=True),
+                         'My social security is 098.67.9878')
         test_data = Pii('My social security is 098679878')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is 098679878')
+        self.assertEqual(test_data.has_ssn(anonymize=True),
+                         'My social security is 098679878')
         test_data = Pii('My social security is 098-6-9878')
-        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is 098-6-9878')
+        self.assertEqual(test_data.has_ssn(anonymize=True),
+                         'My social security is 098-6-9878')
 
     def test_has_pii(self):
         test_data = Pii()
