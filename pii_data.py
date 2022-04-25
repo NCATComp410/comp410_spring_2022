@@ -19,7 +19,8 @@ class Pii(str):
 
     def has_email(self, anonymize=False):
         # return True if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b', self) else None
-        new, count = re.subn(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.]{2,}\b', '[email]', self)
+        new, count = re.subn(
+            r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.]{2,}\b', '[email]', self)
 
         print(new)
         print(bool(count))
@@ -28,24 +29,24 @@ class Pii(str):
         else:
             return bool(count)
 
-    def has_ipv4(self, anonymize = False):
+    def has_ipv4(self, anonymize=False):
         # the 4 values in the IP address are from 0-255 for each segment each line is 1 segment
         match = re.sub(r'\b([1-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
-                          r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
-                          r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
-                          r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b', '[ipv4]', self)
+                       r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
+                       r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b'
+                       r'.\b([0-9]|[1-9][0-9]|1[0-9][0-9]|2[0-4][0-9]|25[0-5])\b', '[ipv4]', self)
         if anonymize:
             return match
         else:
             return True if match != self else None
 
-    def has_ipv6(self, anonymize = False):
+    def has_ipv6(self, anonymize=False):
         # There are 8 avaliable chunks to place IP data also allowing for no data to be input. Covers 0-9,a-f, and A-F
 
         match = re.sub(r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
-                          r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
-                          r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
-                          r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?', '[ipv6]', self)
+                       r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
+                       r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?:'
+                       r'(\b[0-9A-Fa-f]{0,4}\b)?:(\b[0-9A-Fa-f]{0,4}\b)?', '[ipv6]', self)
         if anonymize:
             return match
         else:
@@ -59,7 +60,8 @@ class Pii(str):
             return True if namestr != self else None
 
     def has_street_address(self, anonymize=False):
-        addstr = re.sub(r'[0-9]+\s[A-Z][a-z]+\s[A-Z][a-z]+', '[street address]', self)
+        addstr = re.sub(r'[0-9]+\s[A-Z][a-z]+\s[A-Z][a-z]+',
+                        '[street address]', self)
         if anonymize:
             return addstr
         else:
@@ -73,8 +75,8 @@ class Pii(str):
         else:
             return True if newstr != self else None
 
-    def has_at_handle(self, anonymize = False):
-        match = re.sub('(^|\s)@\w+','[at handle]', self)
+    def has_at_handle(self, anonymize=False):
+        match = re.sub('(^|\s)@\w+', ' [at handle]', self)
         if anonymize:
             return match
         else:
@@ -88,8 +90,16 @@ class Pii(str):
         else:
             return True if newstr != self else None
 
+    def has_account_number(self, anonymize=False):
+        newstr = re.sub(
+            r'\d{2}-\d{6}', '[account number]', self)
+        if anonymize:
+            return newstr
+        else:
+            return True if newstr != self else None
+
     def has_pii(self):
-        return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn()
+        return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn() or self.has_account_number()
 
 
 def anonymize(string: str) -> str:
@@ -102,6 +112,7 @@ def anonymize(string: str) -> str:
     result = Pii(result).has_name(anonymize=True)
     result = Pii(result).has_at_handle(anonymize=True)
     result = Pii(result).has_ssn(anonymize=True)
+    result = Pii(result).has_account_number(anonymize=True)
     return result
 
 
@@ -116,7 +127,8 @@ def read_data() -> list:
                 api_key = m.group(1)
 
     # Construct the URL from the API key
-    url = requests.get('https://drive.google.com/uc?export=download&id=' + api_key)
+    url = requests.get(
+        'https://drive.google.com/uc?export=download&id=' + api_key)
 
     # Return the data as a list of lines
     return url.text.split('\n')
