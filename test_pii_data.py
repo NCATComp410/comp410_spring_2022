@@ -144,6 +144,18 @@ class DataTestCases(unittest.TestCase):
     def test_has_ssn_anonymize(self):
         test_data = Pii('My ssn is 123-45-6789')
         self.assertEqual(test_data.has_ssn(anonymize=True), 'My ssn is [ssn number]')
+        
+    def test_has_account_number(self):
+        test_data = Pii('My account number is 14-45234')
+        self.assertIsNone(test_data.has_account_number())
+        test_data = Pii('My account number is 14-45234')
+        
+    def test_has_account_number_anonymize(self):
+        test_data = Pii('My account number is 56-356783')
+        self.assertEqual(test_data.has_account_number(anonymize=True), 'My account number is [account number]')
+        test_data = Pii('My account number is 56.356783')
+        self.assertEqual(test_data.has_account_number(anonymize=True), 'My account number is 56.356783')
+        
 
 
     def test_has_pii(self):

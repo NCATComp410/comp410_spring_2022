@@ -91,10 +91,20 @@ class Pii(str):
             return match
         else:
             return True if match != self else None
+        
+     
+    def has_account_number(self, anonymize = False):
+        match = re.sub(r'\d{2}-\d{6}', '[account number]', self)
+        if anonymize:
+            return match
+        else:
+            return True if match != self else None
 
 
     def has_pii(self):
-        return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn()
+        return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn() or self.has_account_number()
+    
+    
 
 
 def anonymize(string: str) -> str:
@@ -106,6 +116,7 @@ def anonymize(string: str) -> str:
     result = Pii(result).has_credit_card(anonymize=True)
     result = Pii(result).has_name(anonymize=True)
     result = Pii(result).has_at_handle(anonymize=True)
+    result = Pii(result).has_account_number(anonymize=True)
     result = Pii(result).has_ssn(anonymize=True)
     return result
 
