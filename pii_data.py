@@ -1,7 +1,6 @@
 import re
 import requests
 
-
 # PII = Personally Identifiable Information
 # Create a new Pii class based on str
 class Pii(str):
@@ -82,6 +81,13 @@ class Pii(str):
             # a us phone number was present or not.
             return bool(count1)
 
+    def has_account_number(self, anonymize=False):
+        newstr, count1 = re.subn(r'\d{2}-\d{6}', '[account number]', self)
+        if anonymize:
+            return newstr
+        else:
+            return bool(count1)
+
     def has_at_handle(self, anonymize = False):
         #hand = re.search(r'^@[A-Za-z0-9._-]{1,}', self)
         #hand = re.search(r'^[\w@](?!.*?\.{2})[\w.]{1,28}[\w]$', self)
@@ -115,6 +121,7 @@ def anonymize(string: str) -> str:
     result = Pii(result).has_name(anonymize=True)
     result = Pii(result).has_credit_card(anonymize=True)
     result = Pii(result).has_at_handle(anonymize=True)
+    result = Pii(result).has_account_number(anonymize=True)
     return result
 
 
@@ -134,7 +141,6 @@ def read_data() -> list:
     # Return the data as a list of lines
     return url.text.split('\n')
 
-
 # Writes a list of strings to a local file
 # Returns the number of lines that were written
 def write_data(filename: str, str_list: list) -> int:
@@ -144,7 +150,6 @@ def write_data(filename: str, str_list: list) -> int:
             f.write(s+'\n')
             line_count += 1
     return line_count
-
 
 if __name__ == '__main__':
     # read the data from the case logs
