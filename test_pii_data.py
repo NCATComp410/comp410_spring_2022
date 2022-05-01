@@ -48,12 +48,12 @@ class DataTestCases(unittest.TestCase):
         self.assertFalse(test_data.has_email())
 
     def test_has_email_anoynomize(self):
-        #Anoymize a valid email
+        # Anoymize a valid email
         self.assertEqual(Pii('My email is johnsmith@gmail.com').has_email(anonymize=True), 'My email is [email]')
 
-        #Anoymize an invalid email
-        self.assertEqual(Pii('My email is johnsmithgmail.com').has_email(anonymize=True), 'My email is johnsmithgmail.com')
-
+        # Anoymize an invalid email
+        self.assertEqual(Pii('My email is johnsmithgmail.com').has_email(anonymize=True),
+                         'My email is johnsmithgmail.com')
 
     def test_has_ipv4(self):
         # Test a valid address
@@ -84,26 +84,6 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_ipv4(anonymize=True),
                          'Samantha\'s address is [iPv4 address]')
 
-        # Test a reserved address
-        # test_data = Pii('255.255.255.255')  # for broadcasting
-        # self.assertFalse(test_data.has_ipv4())
-        # # Test anonymize
-        # self.assertEqual(test_data.has_ipv4(anonymize=True),
-        #                  test_data)
-        # test_data = Pii('0.0.0.0')  # for default route
-        # self.assertFalse(test_data.has_ipv4())
-        # # Test anonymize
-        # self.assertEqual(test_data.has_ipv4(anonymize=True),
-        #                  test_data)
-        #
-        # Test an out of range address
-        # test_data = Pii('192.168.168.256')
-        # self.assertFalse(test_data.has_ipv4())
-        # holder = test_data.has_ipv4(True)
-        # # Test anonymize
-        # self.assertEqual(test_data.has_ipv4(anonymize=True),
-        #                  test_data)
-
         # Test incorrect format
         test_data = Pii('192.168')  # incomplete address
         self.assertFalse(test_data.has_ipv4())
@@ -116,18 +96,6 @@ class DataTestCases(unittest.TestCase):
         # Test anonymize
         self.assertEqual(test_data.has_ipv4(anonymize=True),
                          test_data)
-
-        # test_data = Pii('.192.168.168.256')  # dot at beginning
-        # self.assertFalse(test_data.has_ipv4())
-        # # Test anonymize
-        # self.assertEqual(test_data.has_ipv4(anonymize=True),
-        #                  test_data)
-
-        # test_data = Pii('192.168.168.256.')  # dot at end
-        # self.assertFalse(test_data.has_ipv4())
-        # # Test anonymize
-        # self.assertEqual(test_data.has_ipv4(anonymize=True),
-        #                  test_data)
 
         test_data = Pii('1f2.168.168.256')  # with 'f' in place of number
         self.assertFalse(test_data.has_ipv4())
@@ -202,7 +170,6 @@ class DataTestCases(unittest.TestCase):
         self.assertEqual(test_data.has_ipv6(anonymize=True),
                          '2001.0db8.85a3.0000.0000.8a2e.0370.7334')
 
-
     def test_has_name(self):
         # test a valid name
         test_data = Pii('John Doe')
@@ -222,6 +189,15 @@ class DataTestCases(unittest.TestCase):
         # test a valid street address
         test_data = Pii('1234 Nowhere Street')
         self.assertEqual(test_data.has_street_address(anonymize=True), '[street address]')
+
+    def test_has_account_number(self):
+        test_data = Pii('contacted the help desk to report an issue with their account number 46-048767.')
+        self.assertEqual(test_data.has_account_number(anonymize=True), 'contacted the help '
+                                                                       'desk to report an issue with their account '
+                                                                       'number [account number].')
+
+        test_data = Pii('contacted the help desk to report an issue with their account number 46-048767.')
+        self.assertEqual(test_data.has_account_number(anonymize=True), "contacted the help desk to report an issue with their account number [account number].")
 
     def test_has_credit_card(self):
         # Test case for a valid credit card
@@ -291,7 +267,6 @@ class DataTestCases(unittest.TestCase):
     def test_has_ssn_anonymize(self):
         test_data = Pii('My ssn is 123-45-6789')
         self.assertEqual(test_data.has_ssn(anonymize=True), 'My ssn is [ssn number]')
-
 
     def test_has_pii(self):
         test_data = Pii()
