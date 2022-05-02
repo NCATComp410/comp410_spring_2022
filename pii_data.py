@@ -113,9 +113,15 @@ class Pii(str):
             return True
         return False
 
-    def has_at_handle(self):
+    def has_at_handle(self, anonymize=False):
         # search "@"
-        return True if re.search(r'(^|\s)@[\w._%+-]+', self) else False
+        match = re.sub(r'@[\w._%+-]+', '[at handle].', self)
+        if anonymize:
+            return match
+        if '[at handle]' in match:
+            return True
+        return False
+        # return True if re.search(r'(^|\s)@[\w._%+-]+', self) else False
 
     def has_ssn(self, anonymize=False):
         match = re.sub(r'\d{3}-\d{2}-\d{4}', '[ssn number]', self)
@@ -139,7 +145,7 @@ def anonymize(string: str) -> str:
     result = Pii(result).has_street_address(anonymize=True)
     result = Pii(result).has_credit_card(anonymize=True)
     result = Pii(result).has_name(anonymize=True)
-    # result = Pii(result).has_at_handle(anonymize=True)
+    result = Pii(result).has_at_handle(anonymize=True)
     result = Pii(result).has_ssn(anonymize=True)
     result = Pii(result).has_account_number(anonymize=True)
     return result
@@ -202,7 +208,7 @@ if __name__ == '__main__':
                 # All @ symbols should have been removed
                 # if any are present print the line
                 if '@' in eventlog:
-                    print()
+                    print(line, end='')
 
                 # Check for anything that looks like a name or an address
                 m = re.search(r'([A-Z][a-z]+ [A-Z])', eventlog)
