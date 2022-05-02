@@ -107,6 +107,15 @@ class Pii(str):
         #    return True
         #return None
 
+
+    def has_ssn(self, anonymize=False):
+        newstr = re.sub(
+            r'\d{3}-\d{2}-\d{4}', '[social security number]', self)
+        if anonymize:
+            return newstr
+        else:
+            return True if newstr != self else False
+
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
                self.has_street_address() or self.has_credit_card() or self.has_at_handle()
@@ -122,6 +131,8 @@ def anonymize(string: str) -> str:
     result = Pii(result).has_credit_card(anonymize=True)
     result = Pii(result).has_at_handle(anonymize=True)
     result = Pii(result).has_account_number(anonymize=True)
+    result = Pii(result).has_ssn(anonymize=True)
+
     return result
 
 
@@ -161,3 +172,27 @@ if __name__ == '__main__':
 
     # write results to a file
     write_data('case_logs_anonymized.csv', data)
+
+    with open('case_logs_anonymized.csv') as f:
+        for line in f.readlines():
+            # make sure the line has enough content to scan
+            if len(line) > 20:
+                # split lines read from the file into the timestamp and eventlog
+                # this will make it easier to check the eventlog for possible PII
+                timestamp, eventlog = line.split(',')
+
+                # 2 or more numbers appearing together is suspicious
+                # if this is seen, print the line
+                m = re.search(r'\d{2,}', eventlog)
+                if m:
+                    print(line, end='')
+
+                # All @ symbols should have been removed
+                # if any are present print the line
+                if '@' in eventlog:
+                    print(line, end='')
+
+                # Check for anything that looks like a name or an address
+                m = re.search(r'([A-Z][a-z]+ [A-Z])', eventlog)
+                if m:
+                    print(line, end='')

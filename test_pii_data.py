@@ -226,6 +226,28 @@ class DataTestCases(unittest.TestCase):
         test_data = Pii('@tent%_rellyboii')
         self.assertEqual(test_data.has_at_handle(), False)
 
+
+    def test_has_ssn(self):
+        test_data = Pii('My social security is 123-45-5667')
+        self.assertTrue(test_data.has_ssn())
+        test_data = Pii('My social security is 555-55-3456')
+        self.assertTrue(test_data.has_ssn())
+        test_data = Pii('My social security is 098-67-9878')
+        self.assertTrue(test_data.has_ssn())
+
+    def test_has_ssn_anonymize(self):
+        test_data = Pii('My social security is 123-45-5667')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+
+        test_data = Pii('My social security is 555-55-3456')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+
+        test_data = Pii('My social security is 333-22-1111')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+
+        test_data = Pii('My social security is 777-55-1001')
+        self.assertEqual(test_data.has_ssn(anonymize=True), 'My social security is [social security number]')
+
     def test_has_pii(self):
         test_data = Pii()
         self.assertEqual(test_data.has_pii(), False)
