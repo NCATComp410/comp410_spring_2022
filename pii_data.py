@@ -43,7 +43,7 @@ class Pii(str):
         # 25[0-5]:      match numbers 250 - 255
         # ipv4, count1 = re.subn(r'\d{4}(\d{12})?', '[iPv4 address]', self)
 
-        match = re.sub(r'(^|(?<=\s))(?:\d{1,3}\.){3}\d{1,3}', "[iPv4 address]", self)
+        match = re.sub(r'(^|(?<=\s))(?:\d{1,3}\.){3}\d{1,3}', '[iPv4 address]', self)
         if anonymize:
             return match
         else:
@@ -65,7 +65,7 @@ class Pii(str):
         elif anonymize:
             if count == 0 and count0 == 0:
                 return self
-            if '[iPv6 address]' in ipv6 or ' [iPv6 address]' in ipv6 or '[iPv6 address] ' in ipv6 or ' [iPv6 address] '\
+            if '[iPv6 address]' in ipv6 or ' [iPv6 address]' in ipv6 or '[iPv6 address] ' in ipv6 or ' [iPv6 address] ' \
                     in ipv6:
                 return ipv6
             else:
@@ -74,6 +74,15 @@ class Pii(str):
                 return "Invalid address"
         return bool(count + count0)
 
+    def has_account_number(self, anonymize=False):
+        account_num, count = re.subn(r'\d{2}-\d{6}', '[account number]', self)
+        account_num, count0 = re.subn(r'\d{2}-\d{6}.*', '[account number]', account_num)
+        if anonymize:
+            return account_num
+        else:
+            if '[account number]' in account_num:
+                return True
+        return False
 
     def has_name(self, anonymize=False):
         # match the user's name
@@ -104,12 +113,18 @@ class Pii(str):
             return True
         return False
 
-    def has_at_handle(self):
+    def has_at_handle(self, anonymize=False):
         # search "@"
-        return True if re.search(r'(^|\s)@[\w._%+-]+', self) else False
+        match = re.sub(r'@[\w._%+-]+', '[at handle].', self)
+        if anonymize:
+            return match
+        if '[at handle]' in match:
+            return True
+        return False
+        # return True if re.search(r'(^|\s)@[\w._%+-]+', self) else False
 
-    def has_ssn(self, anonymize= False):
-        match = re.sub(r'\d{3}-\d{2}-\d{4}','[ssn number]', self)
+    def has_ssn(self, anonymize=False):
+        match = re.sub(r'\d{3}-\d{2}-\d{4}', '[ssn number]', self)
         if anonymize:
             return match
         else:
@@ -119,7 +134,7 @@ class Pii(str):
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
-               self.has_street_address() or self.has_credit_card() or self.has_at_handle()
+               self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_account_number()
 
 
 def anonymize(string: str) -> str:
@@ -130,8 +145,9 @@ def anonymize(string: str) -> str:
     result = Pii(result).has_street_address(anonymize=True)
     result = Pii(result).has_credit_card(anonymize=True)
     result = Pii(result).has_name(anonymize=True)
-    # result = Pii(result).has_at_handle(anonymize=True)
+    result = Pii(result).has_at_handle(anonymize=True)
     result = Pii(result).has_ssn(anonymize=True)
+    result = Pii(result).has_account_number(anonymize=True)
     return result
 
 
@@ -158,12 +174,13 @@ def write_data(filename: str, str_list: list) -> int:
     line_count = 0
     with open(filename, 'w') as f:
         for s in str_list:
-            f.write(s+'\n')
+            f.write(s + '\n')
             line_count += 1
     return line_count
 
 
 if __name__ == '__main__':
+
     # read the data from the case logs
     data = read_data()
 
@@ -173,3 +190,62 @@ if __name__ == '__main__':
 
     # write results to a file
     write_data('case_logs_anonymized.csv', data)
+
+    with open('case_logs_anonymized.csv') as f:
+        for line in f.readlines():
+            # make sure the line has enough content to scan
+            if len(line) > 20:
+                # split lines read from the file into the timestamp and eventlog
+                # this will make it easier to check the eventlog for possible PII
+                timestamp, eventlog = line.split(',')
+
+                # 2 or more numbers appearing together is suspicious
+                # if this is seen, print the line
+                m = re.search(r'\d{2,}', eventlog)
+                if m:
+                    print(line, end='')
+
+                # All @ symbols should have been removed
+                # if any are present print the line
+                if '@' in eventlog:
+                    print(line, end='')
+
+                # Check for anything that looks like a name or an address
+                m = re.search(r'([A-Z][a-z]+ [A-Z])', eventlog)
+                if m:
+                    print(line, end='')
+
+                # check for anything that looks like an iPv6 address
+                m = re.search(r'((\w((?:[0-9a-fA-F]?){0,4}:)|(:)){7}((?:[0-9a-fA-F]?){0,4}))([^:[0-9a-fA-F]])*',
+                              eventlog)
+                if m:
+                    print(line, end='')
+
+                # check for anything that looks like an iPv4 address
+                m = re.search(r'(?:\d{1,3}\.){3}\d{1,3}',
+                              eventlog)
+                if m:
+                    print(line, end='')
+
+                # check for anything that has numbers followed by a hyphen
+                m = re.search(r'(\d*-)',
+                              eventlog)
+                if m:
+                    print(line, end='')
+
+                # check for anything that has a hyphen followed by numbers
+                m = re.search(r'(-\d*)',
+                              eventlog)
+                if m:
+                    print(line, end='')
+
+                # check for anything that has a number followed by period and visa versa
+                m = re.search(r'(\d*:)',
+                              eventlog)
+                if m:
+                    print(line, end='')
+
+                m = re.search(r'(:\d*)',
+                              eventlog)
+                if m:
+                    print(line, end='')
