@@ -17,7 +17,7 @@ class Pii(str):
 
     def has_email(self, anonymize = False):
         #Match a typical email string@string.string
-        match = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}\b',"[email address]",self)
+        match = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9]{2,}.[A-Za-z]+\b',"[email address]",self)
         if anonymize:
             return match
         else:
@@ -66,29 +66,45 @@ class Pii(str):
                 return True
         return False
 
-    def has_credit_card(self):
+    def has_credit_card(self, anonymize = False):
         # Match a credit card number dddd-dddd-dddd-dddd
-        match = re.search(r'(\d{4}-\d{4}-\d{4}-\d{4})', self)
-        if match:
-            return True
-        return None
+        match = re.sub(r'\d{4}-\d{4}-\d{4}-\d{4}', '[credit card number]', self)
 
-    def has_at_handle(self):
-        match = re.search(r'@\w+(?=[ .]|$)', self)
-        if match:
-            return True
-        return None
+        if anonymize:
+            return match
+        else:
+            if match != self:
+                return True
+        return False
+
+    def has_at_handle(self, anonymize = False):
+        match = re.sub(r'@\w+(?=[ .]|$)', "[at handle]", self)
+        if anonymize:
+            return match
+        else:
+            if match != self:
+                return True
+        return False
 
     def has_ssn(self, anonymize= False):
         newstr = re.sub(r'\d{3}-\d{2}-\d{4}','[ssn number]', self)
         if anonymize:
             return newstr
         else:
-            return True if newstr != self else None
+            return True if newstr != self else False
+
+    def has_account_number(self, anonymize = False):
+        match = re.sub(r'\d{2}-\d{6}', "[account number]", self)
+        if anonymize:
+            return match
+        else:
+            if match != self:
+                return True
+        return False
 
     def has_pii(self):
         return self.has_us_phone() or self.has_email() or self.has_ipv4() or self.has_ipv6() or self.has_name() or \
-               self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn()
+               self.has_street_address() or self.has_credit_card() or self.has_at_handle() or self.has_ssn() or self.has_account_number()
 
 
 def anonymize(string: str) -> str:
@@ -98,7 +114,10 @@ def anonymize(string: str) -> str:
     result = Pii(result).has_ipv6(anonymize=True)
     result = Pii(result).has_street_address(anonymize=True)
     result = Pii(result).has_name(anonymize=True)
+    result = Pii(result).has_credit_card(anonymize=True)
+    result = Pii(result).has_at_handle(anonymize=True)
     result = Pii(result).has_ssn(anonymize=True)
+    result = Pii(result).has_account_number(anonymize=True)
     return result
 
 
